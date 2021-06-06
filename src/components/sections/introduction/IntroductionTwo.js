@@ -23,7 +23,7 @@ function IntroductionTwo() {
             </Col>
             <Col md={12}>
               <div className="introduction-two-content">
-                <SectionTitle title="Welcome To Ogami" hideDecoration />
+                <SectionTitle title="Welcome To landekubura" hideDecoration />
                 <p>
                   Sed quia non numquam modi tempora indunt ut labore et dolore
                   magnam aliquam quaerat a non numquam modi tempora indunt ut

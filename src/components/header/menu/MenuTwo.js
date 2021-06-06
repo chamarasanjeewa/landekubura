@@ -17,7 +17,7 @@ export default function MenuTwo({ containerFluid }) {
             <a className="menu-logo">
               <img
                 src={process.env.PUBLIC_URL + "/assets/images/logo.png"}
-                alt="Ogami logo"
+                alt="landekubura logo"
               />
             </a>
           </Link>

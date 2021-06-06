@@ -10,7 +10,7 @@ export default function FooterInfomation() {
         <a className="footer-info__logo">
           <img
             src={process.env.PUBLIC_URL + "/assets/images/logo.png"}
-            alt="Ogami Logo"
+            alt="landekubura Logo"
           />
         </a>
       </Link>
