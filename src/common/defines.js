@@ -1,1 +1,1 @@
-export const API_URL = "https://landekubura-api.herokuapp.com";
+export const API_URL = "http://localhost:6969";
