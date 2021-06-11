@@ -21,7 +21,7 @@ export const fetchProductsData = (query) => {
     renderParam("specifications.color", query.color) +
     renderParam("specifications.size", query.size) +
     renderParam("tag_like", query.tag);
-  return axiosService.get(endpoint);
+  return axiosService.get("/api/products");
 };
 
 export const fetchSaleProductsData = (query) => {
