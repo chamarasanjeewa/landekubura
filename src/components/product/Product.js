@@ -5,11 +5,11 @@ import Link from "next/link";
 import Countdown, { zeroPad } from "react-countdown";
 import classNames from "classnames";
 import { LoadingOutlined } from "@ant-design/icons";
-
 import { formatCurrency } from "../../common/utils";
 import { checkProductInWishlist } from "../../common/shopUtils";
 import { fetchCartRequest } from "../../redux/actions/cartActions";
 import { fetchWishListRequest } from "../../redux/actions/wishlistActions";
+import QuantitySelector from "../../components/other/QuantitySelector";
 import {
   addToCompare,
   removeFromCompare,
@@ -26,6 +26,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const [addToWishlistLoading, setAddToWishlistLoading] = useState(false);
+  const [currentQuantity, setCurrentQuantity] = useState(0);
   const cartState = useSelector((state) => state.cartReducer);
   const wishlistState = useSelector((state) => state.wishlistReducer);
   const compareState = useSelector((state) => state.compareReducer);
@@ -275,10 +276,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                 disabled
                 defaultValue={data.rate}
               />
-              <p className="product-description">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                eiusmod tempor niam
-              </p>
+              <p className="product-description">{data.description}</p>
               {data.quantity > 0 ? (
                 <h5 className="product-availability -instock">
                   Availability: <span> {data.quantity} in stock</span>
@@ -315,7 +313,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   onClick={() => onAddToCompare(data)}
                   shape="round"
                   className={classNames({
-                    active: productInCompare,
+                    active: productInCompare
                   })}
                 >
                   Add to compare
@@ -354,12 +352,18 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                 {data.discount && <del>{formatCurrency(data.price)}</del>}
               </h3>
             </div>
+            {/* <div>
+              <QuantitySelector
+                onChange={val => setCurrentQuantity(val)}
+                max={5}
+              />
+            </div> */}
             <div className="product-select">
               <Tooltip title="Add to wishlist">
                 <Button
                   onClick={() => onAddWishlist(data)}
                   className={`product-btn ${classNames({
-                    active: productInWishlist,
+                    active: productInWishlist
                   })}`}
                   type="primary"
                   shape="round"
@@ -391,7 +395,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                 <Button
                   onClick={() => onAddToCompare(data)}
                   className={`product-btn ${classNames({
-                    active: productInCompare,
+                    active: productInCompare
                   })}`}
                   type="primary"
                   shape="round"

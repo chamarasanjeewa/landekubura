@@ -20,11 +20,11 @@ export default function TopNavOne({ containerFluid }) {
             <ul>
               <li>
                 <i className="fas fa-envelope" />
-                info.deercreative@gmail.com
+                info.dumy@gmail.com
               </li>
               <li>
                 <i className="fas fa-phone-alt" />
-                +65 11.188.888
+                +94 772 536 011
               </li>
             </ul>
           </div>
@@ -42,7 +42,7 @@ export default function TopNavOne({ containerFluid }) {
                         width: 20 / 16 + "em",
                         objectFit: "contain",
                         marginTop: -3 / 16 + "em",
-                        marginRight: 5 / 16 + "em",
+                        marginRight: 5 / 16 + "em"
                       }}
                       src={process.env.PUBLIC_URL + item.image}
                       alt=""

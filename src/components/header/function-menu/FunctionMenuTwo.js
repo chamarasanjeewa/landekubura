@@ -24,7 +24,7 @@ function FunctionMenuTwo({ activeCollapse }) {
             <Col xs={24} md={{ span: 2, order: 3 }} lg={6}>
               <div className="function-menu-contact">
                 <i className="fas fa-phone-alt" />
-                <span>+65 11.188.888</span>
+                <span>+94 772 536 011</span>
               </div>
             </Col>
           </Row>

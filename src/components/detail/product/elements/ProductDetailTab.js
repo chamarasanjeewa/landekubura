@@ -45,29 +45,29 @@ function ProductDetailTab({ fullDescription, specifications, reviews }) {
               <tbody>
                 <tr>
                   <td>Weight</td>
-                  <td>{specifications.weight}</td>
+                  <td>{specifications?.weight}</td>
                 </tr>
                 <tr>
                   <td>Dimensions</td>
                   <td>
-                    {specifications.dimensions.long} x{" "}
-                    {specifications.dimensions.width} x{" "}
-                    {specifications.dimensions.height}
+                    {specifications?.dimensions?.long} x{" "}
+                    {specifications?.dimensions?.width} x{" "}
+                    {specifications?.dimensions?.height}
                   </td>
                 </tr>
                 <tr>
                   <td>Color</td>
-                  <td>{specifications.color}</td>
+                  <td>{specifications?.color}</td>
                 </tr>
                 <tr>
                   <td>Size</td>
-                  <td>{specifications.size}</td>
+                  <td>{specifications?.size}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </TabPane>
-        <TabPane tab="Reviews" key="3">
+        {/* <TabPane tab="Reviews" key="3">
           <div className="product-detail-tab__reviews">
             {reviews.map((item, index) => (
               <ReviewItem key={index} data={item} />
@@ -121,7 +121,7 @@ function ProductDetailTab({ fullDescription, specifications, reviews }) {
               </Form>
             </div>
           </div>
-        </TabPane>
+        </TabPane> */}
       </Tabs>
     </div>
   );

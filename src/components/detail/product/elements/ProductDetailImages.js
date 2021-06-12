@@ -38,7 +38,7 @@ function ProductDetailImages({ type, images }) {
           {images &&
             images.map((img, index) => (
               <div key={index} className="slide-item">
-                <img src={process.env.PUBLIC_URL + img} alt="Product image" />
+                <img src={''+img} alt="Product image" />
               </div>
             ))}
         </Slider>

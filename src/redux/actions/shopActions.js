@@ -21,6 +21,25 @@ export const fetchProductsFail = (err) => ({
   },
 });
 
+export const insertProducts = () => ({
+  type: SHOP.INSERT_PRODUCT
+});
+
+export const insertProductsSuccess = (data, productCount) => ({
+  type: SHOP.INSERT_PRODUCTS_SUCCESS,
+  payload: {
+    data,
+    productCount
+  }
+});
+
+export const insertProductsFail = err => ({
+  type: SHOP.INSERT_PRODUCTS_FAIL,
+  payload: {
+    err
+  }
+});
+
 export const fetchProductsRequest = (query) => {
   return (dispatch) => {
     dispatch(fetchProducts());
@@ -33,6 +52,48 @@ export const fetchProductsRequest = (query) => {
         dispatch(fetchProductsFail(err));
       });
   };
+};
+
+export const insertProduct = data => {
+  const product = {
+    fullDescription:
+      "Last but not least, we couldn’t write a post on blogs to follow on sustainable living without mentioning our very own blog, The Organic society. Our mission is to inspire families to eat well, do good and live better. Our blog covers all things organic, from food to farming, health and wellness to fashion and beauty",
+    price: "100",
+    name: "Fresh potato",
+    shortDescription:
+      "Your first step to sustainable living is going zero waste and what better way to start then starting at home",
+    rate: "4",
+    coverImage: "/assets/images/products/potato.jpg",
+    images: [
+      "/assets/images/products/potato.jpg",
+      "/assets/images/products/brinjals.jpg",
+      "/assets/images/products/cabbage.jpg"
+    ],
+    quantity: "8",
+    discount: "3"
+  };
+  debugger;
+  shopApis
+    .insertProductsData(product)
+    .then(res => {
+      console.log(res);
+      //dispatch(insertProductsSuccess(res.data, res.headers["x-total-count"]));
+    })
+    .catch(err => {
+      console.log("error");
+      //  dispatch(insertProductsFail(err));
+    });
+  // return dispatch => {
+  //   dispatch(insertProducts());
+  //   shopApis
+  //     .insertProductsData(product)
+  //     .then(res => {
+  //       dispatch(insertProductsSuccess(res.data, res.headers["x-total-count"]));
+  //     })
+  //     .catch(err => {
+  //       dispatch(insertProductsFail(err));
+  //     });
+  // };
 };
 
 //Get sale products

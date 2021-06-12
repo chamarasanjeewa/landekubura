@@ -24,6 +24,11 @@ export const fetchProductsData = (query) => {
   return axiosService.get("/api/products");
 };
 
+export const insertProductsData = product => {
+  debugger;
+  return axiosService.post("/api/products/sdfasfssaf", product);
+};
+
 export const fetchSaleProductsData = (query) => {
   let endpoint = renderUrl(API_URL + url, query.limit, query.category);
   return axiosService.get(endpoint);
@@ -46,7 +51,7 @@ export const fetchDaleProductsData = (query) => {
 
 //Fetch product detail
 export const fetchProductDetailData = (slug) => {
-  let endpoint = API_URL + url + "?" + renderParam("slug", slug);
+  let endpoint = "/api/products?" + "?" + renderParam("slug", slug);
   return axiosService.get(endpoint);
 };
 

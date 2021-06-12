@@ -12,7 +12,7 @@
   },
   "SHOP": {
     "title": "Shop",
-    "href": "/shop/shop-grid-3-column",
+    "href": "/shop/shop-3-column",
     "subMenu": {
       "layout": [
         { "title": "Shop Fullwidth", "href": "/shop/shop-fullwidth" },

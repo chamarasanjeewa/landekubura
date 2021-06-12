@@ -13,7 +13,7 @@ function Navigator() {
   };
   return (
     <ul className="navigation">
-      <li className="navigation-item -toggleable">
+      {/* <li className="navigation-item -toggleable">
         <Link href={navigatorData.HOME.href}>
           <a className="navigation-item__title">{navigatorData.HOME.title}</a>
         </Link>
@@ -26,8 +26,18 @@ function Navigator() {
             </li>
           ))}
         </ul>
+      </li> */}
+       <li className="navigation-item">
+        <Link href={'/homepages/homepage5'}>
+          <a className="navigation-item__title">{'HOME'}</a>
+        </Link>
       </li>
-      <li className="navigation-item -toggleable">
+      <li className="navigation-item">
+        <Link href={'/shop/shop-3-column'}>
+          <a className="navigation-item__title">{'SHOP'}</a>
+        </Link>
+      </li>
+      {/* <li className="navigation-item -toggleable">
         <Link href={process.env.PUBLIC_URL + navigatorData.SHOP.href}>
           <a className="navigation-item__title">{navigatorData.SHOP.title}</a>
         </Link>
@@ -63,8 +73,13 @@ function Navigator() {
             ))}
           </div>
         </ul>
+      </li> */}
+       <li className="navigation-item">
+        <Link href={'/other/about-us'}>
+          <a className="navigation-item__title">{'BLOG'}</a>
+        </Link>
       </li>
-      <li className="navigation-item -toggleable">
+      {/* <li className="navigation-item -toggleable">
         <Link href={process.env.PUBLIC_URL + navigatorData.BLOG.href}>
           <a className="navigation-item__title">{navigatorData.BLOG.title}</a>
         </Link>
@@ -77,8 +92,8 @@ function Navigator() {
             </li>
           ))}
         </ul>
-      </li>
-      <li className="navigation-item -toggleable">
+      </li> */}
+      {/* <li className="navigation-item -toggleable">
         <Link href={process.env.PUBLIC_URL + navigatorData.PAGES.href}>
           <a className="navigation-item__title">{navigatorData.PAGES.title}</a>
         </Link>
@@ -91,10 +106,10 @@ function Navigator() {
             </li>
           ))}
         </ul>
-      </li>
+      </li> */}
       <li className="navigation-item">
-        <Link href={process.env.PUBLIC_URL + navigatorData.ABOUT.href}>
-          <a className="navigation-item__title">{navigatorData.ABOUT.title}</a>
+        <Link href={'/other/about-us'}>
+          <a className="navigation-item__title">{'ABOUT'}</a>
         </Link>
       </li>
     </ul>

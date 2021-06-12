@@ -18,7 +18,7 @@ import {
 } from "../../../../redux/actions/compareActions";
 
 export default function ProductDetailContent({ data, type }) {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const [currentQuantity, setCurrentQuantity] = useState(1);
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const cartState = useSelector((state) => state.cartReducer);
@@ -63,34 +63,11 @@ export default function ProductDetailContent({ data, type }) {
           <Col xs={24} sm={24} xl={16}>
             <div className="product-detail-content__left">
               <h5 className="product-type">{data.category}</h5>
-              <h2 className="product-detail-content__name">{data.name}</h2>
+              <h2 className="product-detail-content__name">{data.productName}</h2>
               <div className="product-detail-content__description">
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <p>
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <p>
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                  qui officia mollit anim id est laborum.
-                </p>
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                  accusantium doloremque laudantium, totam rem aperiam, eaque
-                  ipsa quae ab illo inventor.
-                </p>
-                <p>
-                  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
-                  odit aut fugit, sed quia consequuntur magni dolores eos qui
-                  ratione voluptatem
-                </p>
+                {data.fullDescription}
+                </p> 
               </div>
               <ul className="product-detail-content__meta">
                 <li>

@@ -23,6 +23,10 @@ class AxiosService {
     return this.instance.post(url, body);
   }
 
+  put(url, body) {
+    return this.instance.put(url, body);
+  }
+
   patch(url, body) {
     return this.instance.patch(url, body);
   }
