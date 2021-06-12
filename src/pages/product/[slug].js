@@ -10,29 +10,39 @@ import Container from "../../components/other/Container";
 import ShopSidebar from "../../components/shop/ShopSidebar";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
 import FetchDataHandle from "../../components/other/FetchDataHandle";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "react-query";
+import axiosService from "./../../common/axiosService";
+
+const getProducts = async params => {
+  const [id] = params.queryKey;
+  const { data } = await axiosService.get("/api/products/" + id);
+  return data;
+};
 
 function productDetail() {
-  const dispatch = useDispatch();
   const router = useRouter();
   const { slug } = router.query;
-  const shopState = useSelector((state) => state.shopReducer);
-  const { productDetail } = shopState;
-  useEffect(() => {
-    dispatch(fetchProductDetailRequest(slug));
-  }, []);
+  const { isLoading, error, data } = useQuery(slug, getProducts);
+
+  if (isLoading) return "Loading...";
+  if (error) return "An error has occurred: " + error.message;
+
   return (
     <LayoutOne title="Product detail">
       <div className="product-detail">
         <Container>
           <Row gutter={30}>
-            <Col xs={24} md={6}>
+            {/* <Col xs={24} md={6}>
               <ShopSidebar showShortcut />
-            </Col>
+            </Col> */}
             <Col xs={24} md={18}>
-              <FetchDataHandle
-                data={productDetail}
-                renderData={(data) => <ProductDetailLayout data={data[0]} />}
-              />
+                  <ProductDetailLayout data={data} />
             </Col>
           </Row>
         </Container>

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Col, Row, Pagination, Breadcrumb } from "antd";
+import { Col, Row, Pagination, Breadcrumb, Button } from "antd";
 import { useRouter } from "next/router";
 
 import {
   fetchProductsRequest,
   fetchFeaturedProductsRequest,
+  insertProduct
 } from "../../redux/actions/shopActions";
 import LayoutTwo from "../../components/layout/LayoutTwo";
 import Container from "../../components/other/Container";
@@ -57,11 +58,11 @@ function shopGridFullwidth() {
         <div className="shop">
           <div className="shop-content">
             <Row gutter={30}>
-              <Col xs={24} lg={8} xl={4}>
+              {/* <Col xs={24} lg={8} xl={4}>
                 <ShopSidebar style={{ marginTop: 10 / 16 + "em" }} />
-              </Col>
+              </Col> */}
               <Col xs={24} lg={16} xl={20}>
-                <ShopHeader title="Shop grid fullwidth" hideView />
+                <ShopHeader title="Vegitables" hideView />
                 <ProductGrid
                   data={products}
                   hideHeader
@@ -76,6 +77,7 @@ function shopGridFullwidth() {
                     total={products.count}
                   />
                 )}
+               
                 <ProductGrid
                   style={{ marginTop: 70 / 16 + "rem" }}
                   data={featuredProducts}
