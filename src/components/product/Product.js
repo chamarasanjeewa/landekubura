@@ -10,16 +10,33 @@ import { checkProductInWishlist } from "../../common/shopUtils";
 import { fetchCartRequest } from "../../redux/actions/cartActions";
 import { fetchWishListRequest } from "../../redux/actions/wishlistActions";
 import QuantitySelector from "../../components/other/QuantitySelector";
+import axiosService from "./../../common/axiosService";
+import { useAuth } from "../../context/AuthContext";
+
+
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "react-query";
 import {
   addToCompare,
-  removeFromCompare,
+  removeFromCompare
 } from "../../redux/actions/compareActions";
 import { onAddProductToCart } from "../../common/cartServices";
 import {
   onAddProductToWishlist,
-  onRemoveProductFromWishlist,
+  onRemoveProductFromWishlist
 } from "../../common/wishlistServices";
 import ProductDetailLayout from "../detail/product/ProductDetailLayout";
+
+const getProducts = async params => {
+  const { data } = await axiosService.get("/api/cart/");
+  return data;
+};
+
 
 function Product({ data, className, type, countdownLast = 100000000 }) {
   const dispatch = useDispatch();
@@ -27,36 +44,54 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const [addToWishlistLoading, setAddToWishlistLoading] = useState(false);
   const [currentQuantity, setCurrentQuantity] = useState(0);
-  const cartState = useSelector((state) => state.cartReducer);
-  const wishlistState = useSelector((state) => state.wishlistReducer);
-  const compareState = useSelector((state) => state.compareReducer);
+  const cartState = useSelector(state => state.cartReducer);
+  const wishlistState = useSelector(state => state.wishlistReducer);
+  const compareState = useSelector(state => state.compareReducer);
   const productInWishlist = checkProductInWishlist(wishlistState.data, data.id);
   const productInCompare = checkProductInWishlist(compareState, data.id);
+  const { currentUser, logout } = useAuth();
+
+  const updateMutation = useMutation(cartItem =>
+    axiosService.post("/api/cart", cartItem)
+  );
+  const  rec=useQuery('cart-products', getProducts)
+
+  
+  const updatequantityMutation = useMutation(cartItem => axiosService.put('/api/cart', cartItem))
+  const queryClient=useQueryClient();
+
   const showModal = () => {
     setModalVisible(true);
   };
-  const onModalClose = (e) => {
+  const onModalClose = e => {
     setModalVisible(false);
   };
-  const onAddToCart = (product) => {
+  const onAddToCart = product => {
     if (addToCartLoading) {
       return;
     }
     setAddToCartLoading(true);
-    onAddProductToCart({
-      product,
-      onSuccess: (data) => {
-        setAddToCartLoading(false);
-        message.success("Product added to cart");
-        dispatch(fetchCartRequest());
-      },
-      onError: (mes, err) => {
-        setAddToCartLoading(false);
-        message.error(mes);
-      },
+    debugger;
+    updateMutation.mutate({
+      productName: product.productName,
+      id: product.slug,
+      coverImage: product.coverImage,
+      cartQuantity: product.quantity,
+      price: product.price,
+      userId: currentUser.uid
     });
+    message.success("Product added to cart");
+    
+    setAddToCartLoading(false);
   };
-  const onAddWishlist = (product) => {
+
+  const onChangeQuantity = (product, quantity) => {
+    updatequantityMutation.mutate({ ...product,
+      cartQuantity: quantity});
+      queryClient.invalidateQueries('cart-products')
+
+  };
+  const onAddWishlist = product => {
     if (addToWishlistLoading) {
       return;
     }
@@ -64,7 +99,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
     if (!productInWishlist) {
       onAddProductToWishlist({
         product,
-        onSuccess: (data) => {
+        onSuccess: data => {
           setAddToWishlistLoading(false);
           message.success("Product added to wishlist");
           dispatch(fetchWishListRequest());
@@ -73,12 +108,12 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
           setAddToWishlistLoading(false);
           message.error(mes);
           console.log(err);
-        },
+        }
       });
     } else {
       onRemoveProductFromWishlist({
         productId: product.id,
-        onSuccess: (data) => {
+        onSuccess: data => {
           setAddToWishlistLoading(false);
           message.error("Product removed from wishlist");
           dispatch(fetchWishListRequest());
@@ -87,11 +122,11 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
           setAddToWishlistLoading(false);
           message.error(mes);
           console.log(err);
-        },
+        }
       });
     }
   };
-  const onAddToCompare = (product) => {
+  const onAddToCompare = product => {
     if (productInCompare) {
       dispatch(removeFromCompare(product.id));
       message.error("Product removed from compare");
@@ -103,7 +138,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
   const getRandomArbitrary = (min, max) => {
     return Math.random() * (max - min) + min;
   };
-  const rederProductType = (type) => {
+  const rederProductType = type => {
     switch (type) {
       case "tiny":
         return (
@@ -189,12 +224,12 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                 {data.discount && <del>{formatCurrency(data.price)}</del>}
               </h3>
             </div>
-            <div className="product-dale-select">
-              <Tooltip title="Add to wishlist">
+            {/* <div className="product-dale-select"> */}
+              {/* <Tooltip title="Add to wishlist">
                 <Button
                   onClick={() => onAddWishlist(data)}
                   className={`product-btn ${classNames({
-                    active: productInWishlist,
+                    active: productInWishlist
                   })}`}
                   type="primary"
                   shape="round"
@@ -206,8 +241,8 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                     )
                   }
                 />
-              </Tooltip>
-              <Tooltip title="Add to cart">
+              </Tooltip> */}
+              {/* <Tooltip title="Add to cart">
                 <Button
                   onClick={() => onAddToCart(data)}
                   className="product-btn"
@@ -221,19 +256,19 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                     )
                   }
                 />
-              </Tooltip>
-              <Tooltip title="Add to compare">
+              </Tooltip> */}
+              {/* <Tooltip title="Add to compare">
                 <Button
                   onClick={() => onAddToCompare(data)}
                   className={`product-btn ${classNames({
-                    active: productInCompare,
+                    active: productInCompare
                   })}`}
                   type="primary"
                   shape="round"
                   icon={<i className="far fa-random" />}
                 />
-              </Tooltip>
-              <Tooltip title="Quick view">
+              </Tooltip> */}
+              {/* <Tooltip title="Quick view">
                 <Button
                   onClick={showModal}
                   className="product-btn"
@@ -241,8 +276,8 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   shape="round"
                   icon={<i className="far fa-eye" />}
                 />
-              </Tooltip>
-            </div>
+              </Tooltip> */}
+            {/* </div> */}
           </div>
         );
       case "list":
@@ -336,7 +371,23 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
               </Link>
             </div>
             <div className="product-content">
-              <h5 className="product-type">{data.category}</h5>
+            <a className="product-name" title="Pure Pineapple">
+                  {data.productName}
+                </a>
+                <h3>{formatCurrency(data.price)}</h3>
+            {/* <h3 className="product-price">
+                {data.discount
+                  ? formatCurrency(data.price - data.discount)
+                  : formatCurrency(data.price)}
+                {data.discount && <del>{formatCurrency(data.price)}</del>}
+              </h3> */}
+
+            <QuantitySelector
+                            max={30}
+                            onChange={(val) => onChangeQuantity(data, val)}
+                            defaultValue={0}
+                          />
+              {/* <h5 className="product-type">{data.category}</h5>
               <Link
                 href={process.env.PUBLIC_URL + `/product/[slug]`}
                 as={process.env.PUBLIC_URL + `/product/${data.slug}`}
@@ -344,22 +395,18 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                 <a className="product-name" title="Pure Pineapple">
                   {data.name}
                 </a>
-              </Link>
-              <h3 className="product-price">
-                {data.discount
-                  ? formatCurrency(data.price - data.discount)
-                  : formatCurrency(data.price)}
-                {data.discount && <del>{formatCurrency(data.price)}</del>}
-              </h3>
+              </Link> */}
+             
             </div>
+          
             {/* <div>
               <QuantitySelector
                 onChange={val => setCurrentQuantity(val)}
                 max={5}
               />
             </div> */}
-            <div className="product-select">
-              <Tooltip title="Add to wishlist">
+            {/* <div className="product-select"> */}
+              {/* <Tooltip title="Add to wishlist">
                 <Button
                   onClick={() => onAddWishlist(data)}
                   className={`product-btn ${classNames({
@@ -375,8 +422,8 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                     )
                   }
                 />
-              </Tooltip>
-              <Tooltip title="Add to cart">
+              </Tooltip> */}
+              {/* <Tooltip title="Add to cart">
                 <Button
                   onClick={() => onAddToCart(data)}
                   className="product-btn"
@@ -390,8 +437,8 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                     )
                   }
                 />
-              </Tooltip>
-              <Tooltip title="Add to compare">
+              </Tooltip> */}
+              {/* <Tooltip title="Add to compare">
                 <Button
                   onClick={() => onAddToCompare(data)}
                   className={`product-btn ${classNames({
@@ -401,8 +448,8 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   shape="round"
                   icon={<i className="far fa-random" />}
                 />
-              </Tooltip>
-              <Tooltip title="Quick view">
+              </Tooltip> */}
+              {/* <Tooltip title="Quick view">
                 <Button
                   onClick={showModal}
                   className="product-btn"
@@ -410,8 +457,8 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   shape="round"
                   icon={<i className="far fa-eye" />}
                 />
-              </Tooltip>
-            </div>
+              </Tooltip> */}
+            {/* </div> */}
           </div>
         );
     }

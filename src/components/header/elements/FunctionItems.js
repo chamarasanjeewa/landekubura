@@ -1,12 +1,18 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "react-query";
 import { formatCurrency } from "../../../common/utils";
 import { calculateTotalPrice } from "../../../common/shopUtils";
 
-function FunctionItems({ hideTotal, hideWishlist }) {
-  const cartState = useSelector((state) => state.cartReducer);
+function FunctionItems({ hideTotal, hideWishlist = true }) {
+  const queryClient = useQueryClient();
+  const data = queryClient.getQueryData("cart-products");
   return (
     <div className="function-items">
       {!hideWishlist && (
@@ -22,8 +28,8 @@ function FunctionItems({ hideTotal, hideWishlist }) {
           <i className="icon_bag_alt" />
 
           {!hideTotal &&
-            (cartState.data ? (
-              <span>{formatCurrency(calculateTotalPrice(cartState.data))}</span>
+            (data ? (
+              <span>{formatCurrency(calculateTotalPrice(data))}</span>
             ) : (
               <span>{formatCurrency(0)}</span>
             ))}

@@ -6,7 +6,7 @@ export const getProductsBySlug = (arr, slug) => {
 
 export const calculateTotalPrice = (arr) => {
   let total = 0;
-  arr.forEach((item) => {
+  arr?.forEach(item => {
     if (item.discount) {
       total += item.cartQuantity
         ? (item.price - item.discount) * item.cartQuantity

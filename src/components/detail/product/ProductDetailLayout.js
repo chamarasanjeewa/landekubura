@@ -13,12 +13,12 @@ function ProductDetailLayout({ data, type, hideTab, style }) {
       <div className="product-detail" style={style}>
         <Row gutter={30}>
           <Col md={10}>
-            <ProductDetailImages type="column" images={data?.images} />
+            {/* <ProductDetailImages type="column" images={data?.images} /> */}
           </Col>
           <Col md={14}>
-            <ProductDetailContent type="fluid" data={data} />
+            {/* <ProductDetailContent type="fluid" data={data} /> */}
           </Col>
-          <Col md={24}>
+          {/* <Col md={24}>
             {!hideTab && (
               <ProductDetailTab
                 fullDescription={data?.fullDescription}
@@ -26,7 +26,7 @@ function ProductDetailLayout({ data, type, hideTab, style }) {
                 reviews={data?.reviews}
               />
             )}
-          </Col>
+          </Col> */}
         </Row>
       </div>
     );

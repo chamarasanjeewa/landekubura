@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 
 import {
   fetchProductsRequest,
-  fetchFeaturedProductsRequest,
+  fetchFeaturedProductsRequest
 } from "../../redux/actions/shopActions";
-import LayoutOne from "../../components/layout/LayoutOne";
+import LayoutFive from "../../components/layout/LayoutFive";
 import Container from "../../components/other/Container";
 import ShopSidebar from "../../components/shop/ShopSidebar";
 import ProductGrid from "../../components/sections/product-thumb/ProductGrid";
@@ -18,9 +18,9 @@ function shopGrid3Column() {
   const router = useRouter();
   const { q } = router.query;
   const [currentPage, setCurrentPage] = useState(1);
-  const shopState = useSelector((state) => state.shopReducer);
+  const shopState = useSelector(state => state.shopReducer);
   const { products } = shopState;
-  const shopFilterState = useSelector((state) => state.shopFilterReducer);
+  const shopFilterState = useSelector(state => state.shopFilterReducer);
   const { sort, show, view, category, color, size, tag } = shopFilterState;
   useEffect(() => {
     dispatch(fetchFeaturedProductsRequest({ limit: 4 }));
@@ -37,15 +37,15 @@ function shopGrid3Column() {
         category,
         color,
         size,
-        tag,
+        tag
       })
     );
   }, [shopFilterState, currentPage, q]);
-  const onPaginationChange = (current) => {
+  const onPaginationChange = current => {
     setCurrentPage(current);
   };
   return (
-    <LayoutOne title="Shop grid fullwidth">
+    <LayoutFive title="Shop grid fullwidth">
       <Container>
         <Breadcrumb separator=">">
           <Breadcrumb.Item>
@@ -61,7 +61,7 @@ function shopGrid3Column() {
                 <ShopSidebar style={{ marginTop: 10 / 16 + "em" }} />
               </Col>
               <Col xs={24} lg={18}>
-                <ShopHeader title="Shop grid fullwidth" />
+                <ShopHeader title="Currently in store" />
                 <ProductGrid
                   data={products}
                   hideHeader
@@ -85,7 +85,7 @@ function shopGrid3Column() {
           </div>
         </div>
       </Container>
-    </LayoutOne>
+    </LayoutFive>
   );
 }
 

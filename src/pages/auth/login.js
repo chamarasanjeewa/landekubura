@@ -1,21 +1,40 @@
-import { Breadcrumb, Form, Input, Button, Checkbox, Row, Col } from "antd";
+import { Breadcrumb, Form, Input, Button, Checkbox, Row, Col,message } from "antd";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 import LayoutOne from "../../components/layout/LayoutOne";
 import Container from "../../components/other/Container";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/router";
 
 const login = () => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const { login } = useAuth();
+  const router = useRouter();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const onFinish = async values => {
+    try {
+      setError("");
+      setLoading(true);
+      await login(values.username, values.password);
+      message.success(" successfully logged in");
+      router.replace("/");
+    } catch (e) {
+      console.log(e);
+      message.error(e.message);
+      setError("Failed to log in");
+    }
+
+    setLoading(false);
   };
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
   return (
-    <LayoutOne title="Login">
+    // <LayoutOne title="Login">
       <Container>
         <Breadcrumb separator=">">
           <Breadcrumb.Item>
@@ -41,8 +60,8 @@ const login = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your username!",
-                      },
+                        message: "Please input your username!"
+                      }
                     ]}
                   >
                     <Input />
@@ -54,8 +73,8 @@ const login = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your password!",
-                      },
+                        message: "Please input your password!"
+                      }
                     ]}
                   >
                     <Input.Password />
@@ -69,7 +88,7 @@ const login = () => {
                     <Button type="link">Forget your password</Button>
                   </Form.Item>
                   <Form.Item className="form-submit">
-                    <Button type="primary" htmlType="submit">
+                    <Button type="default" htmlType="submit">
                       Signin
                     </Button>
                     <Button type="link">
@@ -85,7 +104,7 @@ const login = () => {
         </div>
         <PartnerOne />
       </Container>
-    </LayoutOne>
+    // </LayoutOne>
   );
 };
 

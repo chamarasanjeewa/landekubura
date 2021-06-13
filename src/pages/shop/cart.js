@@ -19,36 +19,56 @@ import FetchDataHandle from "../../components/other/FetchDataHandle";
 import QuantitySelector from "../../components/other/QuantitySelector";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
+import axiosService from "./../../common/axiosService";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "react-query";
+
+const getProducts = async params => {
+  const { data } = await axiosService.get("/api/cart/");
+  return data;
+};
 
 function cart() {
-  const dispatch = useDispatch();
+  const mutation = useMutation(cartItem => axiosService.delete('/api/cart/'+cartItem.slug, cartItem))
+  const updateMutation = useMutation(cartItem => axiosService.put('/api/cart', cartItem))
+  const queryClient=useQueryClient();
   const [modalState, setModalState] = useState({
     visible: false,
     message: "Add some message",
     cartId: null,
   });
-  const cartState = useSelector((state) => state.cartReducer);
-
-  useEffect(() => {
-    dispatch(fetchCartRequest());
-  }, []);
+  const { isLoading, error, data }=useQuery('cart-products', getProducts)
+  
   const showModal = (message, cartId) => {
     setModalState({ ...modalState, visible: true, message: message, cartId });
   };
   const onChangeQuantity = (product, quantity) => {
-    onChangeProductCartQuantity({
-      product,
-      quantity: quantity,
-      onSuccess: () => dispatch(fetchCartRequest()),
-    });
+    updateMutation.mutate({ ...product,
+      cartQuantity: quantity});
+      queryClient.invalidateQueries('cart-products')
+
   };
-  const handleOk = (e) => {
+
+  const onRemoveQuantity = (product) => {
+    debugger;
+    mutation.mutate({ ...product })
+    message.success("Product removed from cart");
+    queryClient.invalidateQueries('cart-products')
+  
+  };
+
+  const handleOk = (item) => {
+    mutation.mutate({ ...item })
     onRemoveProductFromCart({
       cartId: modalState.cartId,
       onSuccess: () => {
         setModalState({ ...modalState, visible: false });
         message.success("Product removed from cart");
-        dispatch(fetchCartRequest());
       },
       onError: (mes) => {
         setModalState({ ...modalState, visible: false });
@@ -59,12 +79,16 @@ function cart() {
   const handleCancel = (e) => {
     setModalState({ ...modalState, visible: false });
   };
+
   const onSubmitCoupon = (values) => {
     console.log("Success:", values);
   };
+
   const onSubmitCouponFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+  if(isLoading) return "loading...."
+  if(mutation.isLoading ) return "loading...."
   return (
     <LayoutOne title="Shopping Cart">
       <Container>
@@ -77,10 +101,6 @@ function cart() {
           <Breadcrumb.Item>Cart</Breadcrumb.Item>
         </Breadcrumb>
         <ShopOrderStep current={1} />
-        <FetchDataHandle
-          emptyDescription="No product in cart"
-          data={cartState}
-          renderData={(data) => (
             <div className="cart">
               <div className="shop-table">
                 <table>
@@ -103,9 +123,10 @@ function cart() {
                         <Tooltip title="Clear cart">
                           <Button
                             onClick={() =>
-                              showModal(
-                                "Are you sure to remove alll product from cart"
-                              )
+                              onRemoveQuantity(item)
+                              // showModal(
+                              //   "Are you sure to remove alll product from cart"
+                              // )
                             }
                             icon={<i className="fal fa-times" />}
                           ></Button>
@@ -124,28 +145,24 @@ function cart() {
                             />
                           </div>
                         </td>
-                        <td className="table-name">{item.name}</td>
+                        <td className="table-name">{item?.name}</td>
                         <td className="table-price">
-                          {formatCurrency(item.price)}
+                          {formatCurrency(item?.price)}
                         </td>
                         <td>
                           <QuantitySelector
-                            max={item.quantity}
+                            max={item?.quantity}
                             onChange={(val) => onChangeQuantity(item, val)}
-                            defaultValue={item.cartQuantity}
+                            defaultValue={+item?.cartQuantity}
                           />
                         </td>
                         <td className="table-total">
-                          {formatCurrency(item.price * item.cartQuantity)}
+                          {formatCurrency(item?.price * item?.cartQuantity)}
                         </td>
                         <td className="table-remove">
                           <Tooltip title="Remove product">
                             <Button
-                              onClick={() =>
-                                showModal(
-                                  "Are you sure to remove this product from cart",
-                                  item.id
-                                )
+                              onClick={()=>{onRemoveQuantity(item)}
                               }
                               icon={<i className="fal fa-times" />}
                             ></Button>
@@ -194,41 +211,39 @@ function cart() {
                     <tr>
                       <th>SUBTOTAL</th>
                       <td>
-                        {formatCurrency(calculateTotalPrice(cartState.data))}
+                        {formatCurrency(calculateTotalPrice(data))}
                       </td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <th>SHIPPING</th>
                       <td>
                         <p>Free shipping</p>
                         <p>Calculate shipping</p>
                       </td>
-                    </tr>
+                    </tr> */}
                     <tr>
                       <th>Total</th>
                       <td>
-                        {formatCurrency(calculateTotalPrice(cartState.data))}
+                        {formatCurrency(calculateTotalPrice(data))}
                       </td>
                     </tr>
                   </tbody>
                 </table>
                 <div className="cart-total__checkout">
-                  <Button type="primary" shape="round">
+                  <Button type="default" shape="round">
                     <Link href={process.env.PUBLIC_URL + "/shop/checkout"}>
                       <a>Proceed to Checkout</a>
                     </Link>
                   </Button>
                   <span>-</span>
-                  <Button type="link">
+                  {/* <Button type="link">
                     <Link href={process.env.PUBLIC_URL + "#"}>
                       <a>Check out with PayPal</a>
                     </Link>
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
-          )}
-        />
         <PartnerOne />
       </Container>
 

@@ -54,7 +54,7 @@ export default function homepage5() {
   }, [currentProductTabsCategory.featuredProducts]);
   return (
     <LayoutFive
-      title="Homepage 5"
+      title="Landekubura"
       headerClass="-coffee -no-space"
       footerClass="-coffee"
     >

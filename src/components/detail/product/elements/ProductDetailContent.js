@@ -18,7 +18,7 @@ import {
 } from "../../../../redux/actions/compareActions";
 
 export default function ProductDetailContent({ data, type }) {
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [currentQuantity, setCurrentQuantity] = useState(1);
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const cartState = useSelector((state) => state.cartReducer);

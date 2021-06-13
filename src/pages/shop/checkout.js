@@ -19,13 +19,43 @@ import LayoutOne from "../../components/layout/LayoutOne";
 import Container from "../../components/other/Container";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
-import FetchDataHandle from "../../components/other/FetchDataHandle";
+import { useAuth } from "../../context/AuthContext";
+
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "react-query";
+import axiosService from "./../../common/axiosService";
+
+
+const getProducts = async params => {
+  const { data } = await axiosService.get("/api/cart/");
+  return data;
+};
+
+const getUser = async params => {
+  const { data } = await axiosService.get("/api/users/"+params);
+  return data;
+};
 
 function checkout() {
+  const { currentUser, logout } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const router = useRouter();
-  const cartState = useSelector((state) => state.cartReducer);
+  const queryClient=useQueryClient();
+const data = queryClient.getQueryData("cart-products");
+
+//const { isLoading, error, data }=useQuery('cart-products', getProducts)
+const { isLoading, error, data:userData }=useQuery('get-user',()=>{getUser(currentUser.uid)} )
+console.log(userData);
+  //const cartState = useSelector((state) => state.cartReducer);
   const onFinish = (values) => {
+    //insert user if not exists
+    //add order
+    //send email
     router.push("/shop/order-complete");
   };
   const onFinishFailed = (errorInfo) => {
@@ -34,6 +64,7 @@ function checkout() {
   const onChoosePaymentMethod = (e) => {
     setPaymentMethod(e.target.value);
   };
+  // if(isLoading) return "loading....."
   return (
     <LayoutOne title="Checkout">
       <Container>
@@ -46,10 +77,10 @@ function checkout() {
           <Breadcrumb.Item>Checkout</Breadcrumb.Item>
         </Breadcrumb>
         <ShopOrderStep current={2} />
-        <FetchDataHandle
+        {/* <FetchDataHandle
           emptyDescription="No product in cart"
           data={cartState}
-          renderData={(data) => (
+          renderData={(data) => ( */}
             <div className="checkout">
               <Row gutter={50}>
                 <Col xs={24} md={16}>
@@ -91,15 +122,15 @@ function checkout() {
                             <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={24}>
+                        {/* <Col span={24}>
                           <Form.Item
                             label="Company name (optional)"
                             name="company"
                           >
                             <Input />
                           </Form.Item>
-                        </Col>
-                        <Col span={24}>
+                        </Col> */}
+                        {/* <Col span={24}>
                           <Form.Item
                             label="Country"
                             name="country"
@@ -118,7 +149,7 @@ function checkout() {
                               <Select.Option value="japan">japan</Select.Option>
                             </Select>
                           </Form.Item>
-                        </Col>
+                        </Col> */}
                         <Col span={24}>
                           <Form.Item
                             label="Street address"
@@ -170,7 +201,7 @@ function checkout() {
                           </Form.Item>
                         </Col>
                         <Col span={24}>
-                          <Form.Item
+                          <Form.Item initialValue={userData?.email}
                             label="Email address"
                             name="email"
                             rules={[
@@ -203,10 +234,10 @@ function checkout() {
                     <h3 className="checkout-title">Your order</h3>
                     <table className="checkout-total__table">
                       <tbody>
-                        {data.map((item, index) => (
+                        {data?.map((item, index) => (
                           <tr key={index}>
                             <td>
-                              {item.name} x {item.cartQuantity}
+                              {item.productName} x {item.cartQuantity}
                             </td>
                             <td className="-bold ">
                               {formatCurrency(item.price * item.cartQuantity)}
@@ -219,13 +250,13 @@ function checkout() {
                             {formatCurrency(calculateTotalPrice(data))}
                           </td>
                         </tr>
-                        <tr>
+                        {/* <tr>
                           <th>SHIPPING</th>
                           <td>
                             <p>Free shipping</p>
                             <p>Calculate shipping</p>
                           </td>
-                        </tr>
+                        </tr> */}
                         <tr>
                           <th>Total</th>
                           <td
@@ -245,14 +276,14 @@ function checkout() {
                         <Radio style={{ display: "block" }} value="cod">
                           Cash on delivery
                         </Radio>
-                        <Radio style={{ display: "block" }} value="paypal">
+                        {/* <Radio style={{ display: "block" }} value="paypal">
                           Paypal
-                        </Radio>
+                        </Radio> */}
                       </Radio.Group>
                     </div>
                     <Button
                       className="checkout-sumbit"
-                      type="primary"
+                      type="default"
                       shape="round"
                       form="checkout-form"
                       key="submit"
@@ -264,8 +295,8 @@ function checkout() {
                 </Col>
               </Row>
             </div>
-          )}
-        />
+          {/* )}
+        /> */}
         <PartnerOne />
       </Container>
     </LayoutOne>

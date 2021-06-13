@@ -89,7 +89,7 @@ function ShopSidebar({ showShortcut, style }) {
       </ShopSidebarSection>
       {!showShortcut && (
         <>
-          <ShopSidebarSection className="-colors" title="Popular colors">
+          {/* <ShopSidebarSection className="-colors" title="Popular colors">
             <ul>
               {data.color.map((item, index) => (
                 <li
@@ -117,11 +117,11 @@ function ShopSidebar({ showShortcut, style }) {
                 </li>
               ))}
             </ul>
-          </ShopSidebarSection>
+          </ShopSidebarSection> */}
         </>
       )}
 
-      <ShopSidebarSection className="-tags" title="Popular tags">
+      {/* <ShopSidebarSection className="-tags" title="Popular tags">
         {data.tags.map((item, index) => (
           <Button
             className={classNames({ active: tag === item.value })}
@@ -131,7 +131,7 @@ function ShopSidebar({ showShortcut, style }) {
             {item.name}
           </Button>
         ))}
-      </ShopSidebarSection>
+      </ShopSidebarSection> */}
     </div>
   );
 }

@@ -23,4 +23,4 @@ try {
 }
 
 export default firebase.firestore();
-//export const firebase;
+export const auth = firebase.auth();

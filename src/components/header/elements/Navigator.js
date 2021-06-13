@@ -28,13 +28,13 @@ function Navigator() {
         </ul>
       </li> */}
        <li className="navigation-item">
-        <Link href={'/homepages/homepage5'}>
+        <Link href={'/'}>
           <a className="navigation-item__title">{'HOME'}</a>
         </Link>
       </li>
       <li className="navigation-item">
-        <Link href={'/shop/shop-3-column'}>
-          <a className="navigation-item__title">{'SHOP'}</a>
+        <Link href={'/shop/shop'}>
+          <a className="navigation-item__title">{'BUY VEGITABLES'}</a>
         </Link>
       </li>
       {/* <li className="navigation-item -toggleable">
@@ -74,11 +74,11 @@ function Navigator() {
           </div>
         </ul>
       </li> */}
-       <li className="navigation-item">
+       {/* <li className="navigation-item">
         <Link href={'/other/about-us'}>
           <a className="navigation-item__title">{'BLOG'}</a>
         </Link>
-      </li>
+      </li> */}
       {/* <li className="navigation-item -toggleable">
         <Link href={process.env.PUBLIC_URL + navigatorData.BLOG.href}>
           <a className="navigation-item__title">{navigatorData.BLOG.title}</a>
@@ -109,7 +109,7 @@ function Navigator() {
       </li> */}
       <li className="navigation-item">
         <Link href={'/other/about-us'}>
-          <a className="navigation-item__title">{'ABOUT'}</a>
+          <a className="navigation-item__title">{'ABOUT US'}</a>
         </Link>
       </li>
     </ul>

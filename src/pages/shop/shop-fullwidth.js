@@ -46,7 +46,7 @@ function shopGridFullwidth() {
     setCurrentPage(current);
   };
   return (
-    <LayoutTwo title="Shop grid fullwidth">
+    <LayoutTwo title="Currently in store">
       <Container fluid>
         <Breadcrumb separator=">">
           <Breadcrumb.Item>
