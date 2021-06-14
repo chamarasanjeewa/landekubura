@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   Form,
   Input,
@@ -11,8 +10,7 @@ import {
   Radio,
   Breadcrumb,
 } from "antd";
-import { useRouter } from "next/router";
-
+import { useRouter } from "next/router"
 import { formatCurrency } from "../../common/utils";
 import { calculateTotalPrice } from "../../common/shopUtils";
 import LayoutOne from "../../components/layout/LayoutOne";
@@ -20,39 +18,21 @@ import Container from "../../components/other/Container";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
 import { useAuth } from "../../context/AuthContext";
-
+import {getUser} from './../../apis/user';
 import {
   useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider
+  useQueryClient
 } from "react-query";
-import axiosService from "./../../common/axiosService";
-
-
-const getProducts = async params => {
-  const { data } = await axiosService.get("/api/cart/");
-  return data;
-};
-
-const getUser = async params => {
-  const { data } = await axiosService.get("/api/users/"+params);
-  return data;
-};
 
 function checkout() {
-  const { currentUser, logout } = useAuth();
+  const { currentUser } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const router = useRouter();
   const queryClient=useQueryClient();
 const data = queryClient.getQueryData("cart-products");
-
-//const { isLoading, error, data }=useQuery('cart-products', getProducts)
 const { isLoading, error, data:userData }=useQuery('get-user',()=>{getUser(currentUser.uid)} )
-console.log(userData);
-  //const cartState = useSelector((state) => state.cartReducer);
-  const onFinish = (values) => {
+
+const onFinish = (values) => {
     //insert user if not exists
     //add order
     //send email

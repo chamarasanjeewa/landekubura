@@ -1,6 +1,28 @@
 import axiosService from "../common/axiosService";
 import { API_URL } from "../common/defines";
 import { renderParam } from "../common/utils";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "react-query";
+
+export const getCartProducts = async params => {
+  const { data } = await axiosService.get("/api/cart/");
+  return data;
+};
+
+export const updateCartProducts = async cartItem => {
+ return axiosService.put('/api/cart', cartItem)
+};
+
+export const deleteCartProducts = async cartItem => {
+return  axiosService.delete('/api/cart/'+cartItem.slug, cartItem)
+
+};
+
 
 const url = "/cart";
 

@@ -1,52 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, {  useState } from "react";
 import { Button, Tooltip, Modal, Form, Input, message, Breadcrumb } from "antd";
 import Link from "next/link";
-
 import {
   onRemoveProductFromCart,
-  onChangeProductCartQuantity,
 } from "../../common/cartServices";
-import { fetchCartRequest } from "../../redux/actions/cartActions";
 import { formatCurrency } from "../../common/utils";
 import {
-  calculateTotalPrice,
-  checkProductCartQuantity,
-} from "../../common/shopUtils";
+  calculateTotalPrice} from "../../common/shopUtils";
 import LayoutOne from "../../components/layout/LayoutOne";
 import Container from "../../components/other/Container";
-import FetchDataHandle from "../../components/other/FetchDataHandle";
 import QuantitySelector from "../../components/other/QuantitySelector";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
-import axiosService from "./../../common/axiosService";
+import {getCartProducts,deleteCartProducts,updateCartProducts} from '../../apis/cart';
 import {
   useQuery,
   useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider
+  useQueryClient
 } from "react-query";
 
-const getProducts = async params => {
-  const { data } = await axiosService.get("/api/cart/");
-  return data;
-};
 
 function cart() {
-  const mutation = useMutation(cartItem => axiosService.delete('/api/cart/'+cartItem.slug, cartItem))
-  const updateMutation = useMutation(cartItem => axiosService.put('/api/cart', cartItem))
+  const mutation = useMutation(cartItem =>deleteCartProducts(cartItem))
+  const updateMutation = useMutation(cartItem => updateCartProducts(cartItem))
   const queryClient=useQueryClient();
   const [modalState, setModalState] = useState({
     visible: false,
     message: "Add some message",
     cartId: null,
   });
-  const { isLoading, error, data }=useQuery('cart-products', getProducts)
+  const { isLoading, error, data }=useQuery('cart-products', getCartProducts)
   
   const showModal = (message, cartId) => {
     setModalState({ ...modalState, visible: true, message: message, cartId });
   };
+
   const onChangeQuantity = (product, quantity) => {
     updateMutation.mutate({ ...product,
       cartQuantity: quantity});
@@ -93,11 +81,11 @@ function cart() {
     <LayoutOne title="Shopping Cart">
       <Container>
         <Breadcrumb separator=">">
-          <Breadcrumb.Item>
+          <Breadcrumb.Item href={"/"}>
             <i className="fas fa-home" />
             Home
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>Shop</Breadcrumb.Item>
+          </Breadcrumb.Item >
+          <Breadcrumb.Item href={"/shop/product-list"}>Shop</Breadcrumb.Item>
           <Breadcrumb.Item>Cart</Breadcrumb.Item>
         </Breadcrumb>
         <ShopOrderStep current={1} />

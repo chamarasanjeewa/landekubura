@@ -1,6 +1,13 @@
 import axiosService from "../common/axiosService";
 import { API_URL } from "../common/defines";
 import { renderParam } from "../common/utils";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "react-query";
 
 const url = "/product";
 
@@ -10,18 +17,28 @@ const renderUrl = (url, limit, category) => {
   );
 };
 
+export const getProducts = async () => {
+  const { data } = await axiosService.get("/api/products");
+  return data;
+};
+
+// export const getCartProducts = async params => {
+//   const { data } = await axiosService.get("/api/cart/");
+//   return data;
+// };
 //Fetch list of products
-export const fetchProductsData = (query) => {
-  let endpoint =
-    renderUrl(API_URL + url, query.limit, query.category) +
-    renderParam("_page", query.page) +
-    renderParam("_sort", query.sort.sort) +
-    renderParam("_order", query.sort.order) +
-    renderParam("q", query.q) +
-    renderParam("specifications.color", query.color) +
-    renderParam("specifications.size", query.size) +
-    renderParam("tag_like", query.tag);
-  return axiosService.get("/api/products");
+export const fetchProductsData = async query => {
+  // let endpoint =
+  //   renderUrl(API_URL + url, query.limit, query.category) +
+  //   renderParam("_page", query.page) +
+  //   renderParam("_sort", query.sort.sort) +
+  //   renderParam("_order", query.sort.order) +
+  //   renderParam("q", query.q) +
+  //   renderParam("specifications.color", query.color) +
+  //   renderParam("specifications.size", query.size) +
+  //   renderParam("tag_like", query.tag);
+  const { data } = await axiosService.get("/api/products");
+  return data;
 };
 
 export const insertProductsData = product => {

@@ -4,7 +4,6 @@ import classNames from "classnames";
 
 import Product from "../../product/Product";
 import SectionTitle from "../../other/SectionTitle";
-import FetchDataHandle from "../../other/FetchDataHandle";
 
 function ProductGrid({
   style,
@@ -30,11 +29,8 @@ function ProductGrid({
         </div>
       )}
       <div className="product-grid-content">
-        <FetchDataHandle
-          data={data}
-          renderData={(data) => (
             <Row gutter={gutter}>
-              {data.map((item, index) => (
+              {data?.map((item, index) => (
                 <Col
                   key={index}
                   {...productCol}
@@ -48,8 +44,6 @@ function ProductGrid({
                 </Col>
               ))}
             </Row>
-          )}
-        />
       </div>
     </div>
   );
