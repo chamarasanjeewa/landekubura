@@ -12,26 +12,26 @@ import {
   useMutation,
   useQueryClient,
   QueryClient,
-  QueryClientProvider,
-} from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
+  QueryClientProvider
+} from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 // Create a client
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 const App = ({ Component, pageProps, reduxStore }) => {
   return (
     <AuthProvider>
-      <CartProvider>
-        <QueryClientProvider client={queryClient}>
-            <Provider store={reduxStore}>
-              <FetchInitData>
-                <Component {...pageProps} />
-              </FetchInitData>
-            </Provider>
-            <ReactQueryDevtools initialIsOpen={true} />
-        </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <CartProvider>
+          <Provider store={reduxStore}>
+            <FetchInitData>
+              <Component {...pageProps} />
+            </FetchInitData>
+          </Provider>
+          <ReactQueryDevtools initialIsOpen={true} />
         </CartProvider>
+      </QueryClientProvider>
     </AuthProvider>
   );
 };
