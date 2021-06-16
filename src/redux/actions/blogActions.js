@@ -1,5 +1,5 @@
 import { BLOG } from "../actionTypes";
-import * as blogApis from "../../apis/blog";
+import * as blogApis from "../../services/blogService";
 
 //Fetch all posts
 export const fetchPosts = () => ({

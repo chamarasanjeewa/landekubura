@@ -7,7 +7,7 @@ import ShopSidebar from "../../components/shop/ShopSidebar";
 import ProductGrid from "../../components/sections/product-thumb/ProductGrid";
 import ShopHeader from "../../components/shop/ShopHeader";
 import { useQuery } from "react-query";
-import {  getProducts  } from "../../apis/shop";
+import { getProducts } from "../../services/shopService";
 
 function shopGrid3Column() {
   const router = useRouter();
@@ -15,8 +15,9 @@ function shopGrid3Column() {
   const  view ="";
   //const shopFilterState = useSelector(state => state.shopFilterReducer);
   //const { sort, show, view, category, color, size, tag } = shopFilterState;
-  const { isLoading, error, data } = useQuery("cart-products", getProducts);
+  const { isLoading, error, data } = useQuery("products", getProducts);
   if (isLoading) return 'loading....'
+//sync product with cart
 
   // const onPaginationChange = current => {
   //   setCurrentPage(current);

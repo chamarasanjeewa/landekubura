@@ -6,20 +6,19 @@ import classNames from "classnames";
 import { formatCurrency } from "../../common/utils";
 import QuantitySelector from "../../components/other/QuantitySelector";
 import { useAuth } from "../../context/AuthContext";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useUpdateCart, useCart } from "../../context/CartContext";
 import ProductDetailLayout from "../detail/product/ProductDetailLayout";
-import { updateCartProducts } from "./../../apis/cart";
 
 function Product({ data, className, type, countdownLast = 100000000 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const { currentUser } = useAuth();
-
-  const updateMutation = useMutation(
-    cartItem =>  updateCartProducts(cartItem)
-  );
-  
-  const queryClient=useQueryClient();
+  const { setProductQty } = useUpdateCart();
+  const { cartProducts } = useCart();
+  const alreadyInCart = cartProducts.find(x => x.id === data.slug);
+  const quantitySelectorDefaultVal = alreadyInCart
+    ? alreadyInCart.cartQuantity
+    : 0;
 
   const showModal = () => {
     setModalVisible(true);
@@ -34,23 +33,34 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
       return;
     }
     setAddToCartLoading(true);
-    updateMutation.mutate({
-      productName: product.productName,
-      id: product.slug,
-      coverImage: product.coverImage,
-      cartQuantity: product.quantity,
-      price: product.price,
-      userId: currentUser.uid
+    setProductQty({
+      product: {
+        productName: product.productName,
+        id: product.slug,
+        coverImage: product.coverImage,
+        cartQuantity: product.quantity,
+        price: product.price,
+        userId: currentUser.uid
+      },
+      qty: 1
     });
+    console.log("....cartProducts...", cartProducts);
+    // updateMutation.mutate({
+    //   productName: product.productName,
+    //   id: product.slug,
+    //   coverImage: product.coverImage,
+    //   cartQuantity: product.quantity,
+    //   price: product.price,
+    //   userId: currentUser.uid
+    // });
     message.success("Product added to cart");
     setAddToCartLoading(false);
   };
 
-  const onChangeQuantity = (product, quantity) => {
-    updateMutation.mutate({ ...product, cartQuantity: quantity });
-      queryClient.invalidateQueries('cart-products')
+  const onChangeQuantity = (product, qty) => {
+    setProductQty({ product: product, qty: qty });
   };
- 
+
   const getRandomArbitrary = (min, max) => {
     return Math.random() * (max - min) + min;
   };
@@ -101,7 +111,6 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                 </a>
               </Link>
             </div>
-
             <Countdown
               date={Date.now() + getRandomArbitrary(100000000, 150000000)}
               renderer={({ days, hours, minutes, seconds }) => {
@@ -200,13 +209,13 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                 </div>
               </h3>
               <div className="product-detail-content__actions">
-                <Button
+                {/* <Button
                   onClick={() => onAddToCart(data)}
                   loading={addToCartLoading}
                   shape="round"
                 >
                   Add to cart
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>
@@ -225,22 +234,22 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
               </Link>
             </div>
             <div className="product-content">
-            <a className="product-name" title="Pure Pineapple">
-                  {data.productName}
-                </a>
-                <h3>{formatCurrency(data.price)}</h3>
-            {/* <h3 className="product-price">
+              <a className="product-name" title="Pure Pineapple">
+                {data.productName}
+              </a>
+              <h3>{formatCurrency(data.price)}</h3>
+              {/* <h3 className="product-price">
                 {data.discount
                   ? formatCurrency(data.price - data.discount)
                   : formatCurrency(data.price)}
                 {data.discount && <del>{formatCurrency(data.price)}</del>}
               </h3> */}
 
-            <QuantitySelector
-                            max={30}
-                            onChange={(val) => onChangeQuantity(data, val)}
-                            defaultValue={0}
-                          />
+              <QuantitySelector
+                max={30}
+                onChange={val => onChangeQuantity(data, val)}
+                defaultValue={quantitySelectorDefaultVal}
+              />
               {/* <h5 className="product-type">{data.category}</h5>
               <Link
                 href={process.env.PUBLIC_URL + `/product/[slug]`}
@@ -250,9 +259,8 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   {data.name}
                 </a>
               </Link> */}
-             
             </div>
-          
+
             {/* <div>
               <QuantitySelector
                 onChange={val => setCurrentQuantity(val)}
@@ -260,7 +268,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
               />
             </div> */}
             {/* <div className="product-select"> */}
-              {/* <Tooltip title="Add to wishlist">
+            {/* <Tooltip title="Add to wishlist">
                 <Button
                   onClick={() => onAddWishlist(data)}
                   className={`product-btn ${classNames({
@@ -277,7 +285,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   }
                 />
               </Tooltip> */}
-              {/* <Tooltip title="Add to cart">
+            {/* <Tooltip title="Add to cart">
                 <Button
                   onClick={() => onAddToCart(data)}
                   className="product-btn"
@@ -292,7 +300,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   }
                 />
               </Tooltip> */}
-              {/* <Tooltip title="Add to compare">
+            {/* <Tooltip title="Add to compare">
                 <Button
                   onClick={() => onAddToCompare(data)}
                   className={`product-btn ${classNames({
@@ -303,7 +311,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
                   icon={<i className="far fa-random" />}
                 />
               </Tooltip> */}
-              {/* <Tooltip title="Quick view">
+            {/* <Tooltip title="Quick view">
                 <Button
                   onClick={showModal}
                   className="product-btn"

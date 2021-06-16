@@ -5,7 +5,7 @@ import {
     QueryClient,
     QueryClientProvider
   } from "react-query";
-  import axiosService from "./../common/axiosService";
+  import axiosService from "./axiosService";
 
 
 export const getUser = async params => {

@@ -9,10 +9,23 @@ import {
 } from "react-query";
 import { formatCurrency } from "../../../common/utils";
 import { calculateTotalPrice } from "../../../common/shopUtils";
+import {
+  getCartProducts,
+  deleteCartProducts,
+  updateCartProducts,
+  onRemoveProductFromCart
+} from "../../../services/cartService";
+import { cartAuth, useCart } from "../../../context/CartContext";
+
 
 function FunctionItems({ hideTotal, hideWishlist = true }) {
+  console.log("rerender function items....");
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData("cart-products");
+  const { totalPrice } = useCart();
+
+  const { isLoading, error, data } = useQuery("cart-products", getCartProducts);
+
+  //const data = queryClient.getQueryCache("cart-products");
   return (
     <div className="function-items">
       {!hideWishlist && (
@@ -29,7 +42,8 @@ function FunctionItems({ hideTotal, hideWishlist = true }) {
 
           {!hideTotal &&
             (data ? (
-              <span>{formatCurrency(calculateTotalPrice(data))}</span>
+              // <span>{formatCurrency(calculateTotalPrice(data))}</span>
+              <span>{formatCurrency(totalPrice)}</span>
             ) : (
               <span>{formatCurrency(0)}</span>
             ))}

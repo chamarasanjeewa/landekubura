@@ -1,9 +1,6 @@
 import React, {  useState } from "react";
 import { Button, Tooltip, Modal, Form, Input, message, Breadcrumb } from "antd";
 import Link from "next/link";
-import {
-  onRemoveProductFromCart,
-} from "../../common/cartServices";
 import { formatCurrency } from "../../common/utils";
 import {
   calculateTotalPrice} from "../../common/shopUtils";
@@ -12,57 +9,76 @@ import Container from "../../components/other/Container";
 import QuantitySelector from "../../components/other/QuantitySelector";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
-import {getCartProducts,deleteCartProducts,updateCartProducts} from '../../apis/cart';
+import {  useUpdateCart } from "../../context/CartContext";
+import{useCart} from  "../../context/CartContext";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+
+
 import {
-  useQuery,
-  useMutation,
-  useQueryClient
-} from "react-query";
+  getCartProducts,
+  deleteCartProducts,
+  updateCartProducts,
+  onRemoveProductFromCart
+} from "../../services/cartService";
+
+
 
 
 function cart() {
-  const mutation = useMutation(cartItem =>deleteCartProducts(cartItem))
-  const updateMutation = useMutation(cartItem => updateCartProducts(cartItem))
-  const queryClient=useQueryClient();
+const { setProductQty } = useUpdateCart();
+
+  // const removeProductMutation = useMutation(cartItem =>deleteCartProducts(cartItem))
+  // const updateProductMutation = useMutation(cartItem =>
+  //   updateCartProducts(cartItem),{onSuccess: (data, variables, context) => {
+  //     // Boom baby!
+  //     console.log('boom baby!');
+  //     queryClient.invalidateQueries('cart-products')
+  //   },}
+  // );
+
+//  const queryClient=useQueryClient();
   const [modalState, setModalState] = useState({
     visible: false,
     message: "Add some message",
     cartId: null,
   });
-  const { isLoading, error, data }=useQuery('cart-products', getCartProducts)
-  
+  //const { isLoading, error, data }=useQuery('cart-products', getCartProducts)
+  const {cartProducts,totalPrice} =useCart();
   const showModal = (message, cartId) => {
     setModalState({ ...modalState, visible: true, message: message, cartId });
   };
 
   const onChangeQuantity = (product, quantity) => {
-    updateMutation.mutate({ ...product,
-      cartQuantity: quantity});
-      queryClient.invalidateQueries('cart-products')
+    setProductQty({product:product,qty:quantity})
+    // updateProductMutation.mutate({ ...product,
+    //   cartQuantity: quantity});
+     
 
   };
 
-  const onRemoveQuantity = (product) => {
+  const onRemoveProductFromCart = (product) => {
     debugger;
-    mutation.mutate({ ...product })
+    removeProductMutation.mutate({ ...product })
     message.success("Product removed from cart");
     queryClient.invalidateQueries('cart-products')
   
   };
 
   const handleOk = (item) => {
-    mutation.mutate({ ...item })
-    onRemoveProductFromCart({
-      cartId: modalState.cartId,
-      onSuccess: () => {
-        setModalState({ ...modalState, visible: false });
-        message.success("Product removed from cart");
-      },
-      onError: (mes) => {
-        setModalState({ ...modalState, visible: false });
-        message.error(mes);
-      },
-    });
+    debugger;
+    console.log('remove all products....')
+    // mutation.mutate({ ...item })
+    // onRemoveProductFromCart({
+    //   cartId: modalState.cartId,
+    //   onSuccess: () => {
+    //     setModalState({ ...modalState, visible: false });
+    //     message.success("Product removed from cart");
+    //   },
+    //   onError: (mes) => {
+    //     setModalState({ ...modalState, visible: false });
+    //     message.error(mes);
+    //   },
+    // });
   };
   const handleCancel = (e) => {
     setModalState({ ...modalState, visible: false });
@@ -75,8 +91,8 @@ function cart() {
   const onSubmitCouponFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-  if(isLoading) return "loading...."
-  if(mutation.isLoading ) return "loading...."
+ // if(isLoading) return "loading...."
+ // if(removeProductMutation.isLoading ) return "loading...."
   return (
     <LayoutOne title="Shopping Cart">
       <Container>
@@ -111,10 +127,10 @@ function cart() {
                         <Tooltip title="Clear cart">
                           <Button
                             onClick={() =>
-                              onRemoveQuantity(item)
-                              // showModal(
-                              //   "Are you sure to remove alll product from cart"
-                              // )
+                             // onRemoveQuantity(item)
+                              showModal(
+                                "Are you sure to remove alll product from cart"
+                              )
                             }
                             icon={<i className="fal fa-times" />}
                           ></Button>
@@ -123,7 +139,7 @@ function cart() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.map((item, index) => (
+                    {cartProducts.map((item, index) => (
                       <tr key={index}>
                         <td className="table-img">
                           <div className="table-img-wrapper">
@@ -150,7 +166,7 @@ function cart() {
                         <td className="table-remove">
                           <Tooltip title="Remove product">
                             <Button
-                              onClick={()=>{onRemoveQuantity(item)}
+                              onClick={()=>{onRemoveProductFromCart(item)}
                               }
                               icon={<i className="fal fa-times" />}
                             ></Button>
@@ -199,7 +215,7 @@ function cart() {
                     <tr>
                       <th>SUBTOTAL</th>
                       <td>
-                        {formatCurrency(calculateTotalPrice(data))}
+                        {formatCurrency()}
                       </td>
                     </tr>
                     {/* <tr>
@@ -212,7 +228,7 @@ function cart() {
                     <tr>
                       <th>Total</th>
                       <td>
-                        {formatCurrency(calculateTotalPrice(data))}
+                        {formatCurrency(totalPrice)}
                       </td>
                     </tr>
                   </tbody>

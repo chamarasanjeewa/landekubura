@@ -18,6 +18,7 @@ export default async (req, res) => {
   async function getProducts() {
     console.log("inside api to get products.....");
     const allProducts = await fireStore.collection("products").get();
+    const cartProducts = await fireStore.collection("cart").get();
     const mappedProducts = await allProducts.docs.map(x => {
       return { slug: x.id, ...x.data() };
     });

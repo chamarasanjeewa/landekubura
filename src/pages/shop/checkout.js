@@ -18,7 +18,7 @@ import Container from "../../components/other/Container";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
 import { useAuth } from "../../context/AuthContext";
-import {getUser} from './../../apis/user';
+import {getUser} from './../../services/userService';
 import {
   useQuery,
   useQueryClient

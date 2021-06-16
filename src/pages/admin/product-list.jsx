@@ -1,5 +1,5 @@
 import { Table, Space, Button } from "antd";
-import axiosService from "./../../common/axiosService";
+import axiosService from "./../../services/axiosService";
 import Container from "../../components/other/Container";
 import Link from "next/link";
 import {

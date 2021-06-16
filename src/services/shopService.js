@@ -1,4 +1,4 @@
-import axiosService from "../common/axiosService";
+import axiosService from "./axiosService";
 import { API_URL } from "../common/defines";
 import { renderParam } from "../common/utils";
 import {

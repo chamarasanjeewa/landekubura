@@ -6,6 +6,7 @@ import "../styles/styles.scss";
 import withReduxStore from "../common/withReduxStore";
 import FetchInitData from "../components/other/FetchInitData";
 import { AuthProvider } from "../context/AuthContext";
+import { CartProvider } from "../context/CartContext";
 import {
   useQuery,
   useMutation,
@@ -21,6 +22,7 @@ const queryClient = new QueryClient()
 const App = ({ Component, pageProps, reduxStore }) => {
   return (
     <AuthProvider>
+      <CartProvider>
         <QueryClientProvider client={queryClient}>
             <Provider store={reduxStore}>
               <FetchInitData>
@@ -29,6 +31,7 @@ const App = ({ Component, pageProps, reduxStore }) => {
             </Provider>
             <ReactQueryDevtools initialIsOpen={true} />
         </QueryClientProvider>
+        </CartProvider>
     </AuthProvider>
   );
 };

@@ -1,6 +1,6 @@
 import { CART } from "../actionTypes";
 
-import * as cartApis from "../../apis/cart";
+import * as cartApis from "../../services/cartService";
 
 //Get cart data
 export const fetchCart = () => ({
