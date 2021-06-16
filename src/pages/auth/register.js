@@ -10,7 +10,7 @@ import {
 } from "antd";
 import Link from "next/link";
 import React, { useState } from "react";
-import axiosService from "./../../common/axiosService";
+import axiosService from "./../../services/axiosService";
 import LayoutOne from "../../components/layout/LayoutOne";
 import Container from "../../components/other/Container";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
