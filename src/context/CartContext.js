@@ -14,31 +14,33 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useLocalstorageCart("shopping-cart");
   const { currentUser } = useAuth();
 
-  const updateProductMutation = useMutation(
-    cartItem => updateCartProducts({   ...cartItem,   userId:   currentUser.uid   }),
-    {
-      onSuccess: (data, variables, context) => {
-        // Boom baby!
-        console.log("boom baby!");
-        // queryClient.invalidateQueries('cart-products')
-      }
-    }
-  );
+  // const updateProductMutation = useMutation(
+  //   cartItem => updateCartProducts({   ...cartItem,   userId:   currentUser.uid   }),
+  //   {
+  //     onSuccess: (data, variables, context) => {
+  //       // Boom baby!
+  //       console.log("boom baby!");
+  //       // queryClient.invalidateQueries('cart-products')
+  //     }
+  //   }
+  // );
 
-  const { isLoading, error, data } = useQuery("cart-products", ()=>{getCartProducts(currentUser.uid)});
+  //const { isLoading, error, data } = useQuery("cart-products", ()=>{getCartProducts(currentUser.uid)});
 
-  useEffect(() => {
-    //if not logged in set products from local storage
+  // useEffect(() => {
+  //   //if not logged in set products from local storage
    
-    if (currentUser ) {
-      if( !isLoading &&data){
-        setCartProducts(data );
-      }
-    } else {
-      setCartProducts(cart);
-    }
-    // else set from server
-  }, [isLoading]);
+  //   if (currentUser ) {
+  //     if( !isLoading &&data){
+  //       setCartProducts(data );
+  //     }
+  //   } else {
+  //     setCartProducts(cart);
+  //   }
+  //   // else set from server
+  // }, [isLoading]);
+
+  useEffect(() => {setCartProducts(cart)},[])
 
   useEffect(() => {
     console.log('running  cart product update .........................................')
@@ -47,16 +49,16 @@ export function CartProvider({ children }) {
       0
     );
     setTotalPrice(formatCurrency(totalPrice));
-    if (currentUser && !isLoading) {
-      debugger;
-      updateProductMutation.mutate({
-        products:   cartProducts,
-userId: currentUser.uid
-      })
-      setCartProducts(cartProducts);
-    } else {
+//     if (currentUser && !isLoading) {
+//       debugger;
+//       updateProductMutation.mutate({
+//         products:   cartProducts,
+// userId: currentUser.uid
+//       })
+//       setCartProducts(cartProducts);
+//     } else {
       setCart(cartProducts);
-    }
+   // }
   }, [cartProducts, setCartProducts,loading]);
 
   const value = {
