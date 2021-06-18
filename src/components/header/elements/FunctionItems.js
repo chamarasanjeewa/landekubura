@@ -43,7 +43,7 @@ function FunctionItems({ hideTotal, hideWishlist = true }) {
           {!hideTotal &&
             (data ? (
               // <span>{formatCurrency(calculateTotalPrice(data))}</span>
-              <span>{formatCurrency(totalPrice)}</span>
+              <span>{totalPrice}</span>
             ) : (
               <span>{formatCurrency(0)}</span>
             ))}

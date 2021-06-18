@@ -1,69 +1,69 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
-import {getCartProducts,updateCartProducts} from "./../services/cartService"
-import {
-  useQuery,
-  useQueryClient,useMutation
-} from "react-query";
+import { getCartProducts, updateCartProducts } from "./../services/cartService";
+import { formatCurrency } from "./../common/utils";
+import { useQuery, useMutation } from "react-query";
 
 const CartContext = React.createContext();
 
 export function CartProvider({ children }) {
-
   const [cartProducts, setCartProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [totalPrice, setTotalPrice] = useState(0);
- const[cart,setCart]= useLocalstorageCart('shopping-cart');
- const { currentUser } = useAuth();
- //const queryClient=useQueryClient();
- const { isLoading, error, data }=useQuery('cart-products', getCartProducts);
- const updateProductMutation = useMutation(cartItem =>
-  updateCartProducts(cartItem),{onSuccess: (data, variables, context) => {
-    // Boom baby!
-    console.log('boom baby!');
-   // queryClient.invalidateQueries('cart-products')
-  },}
-);
+  const [cart, setCart] = useLocalstorageCart("shopping-cart");
+  const { currentUser } = useAuth();
 
+  const updateProductMutation = useMutation(
+    cartItem => updateCartProducts({   ...cartItem,   userId:   currentUser.uid   }),
+    {
+      onSuccess: (data, variables, context) => {
+        // Boom baby!
+        console.log("boom baby!");
+        // queryClient.invalidateQueries('cart-products')
+      }
+    }
+  );
 
- useEffect(() => {
-   //if not logged in set products from local storage
-   if(currentUser){
-  //    setLoading(true)
-  // if(isLoading) return;
-  // setLoading(false);
-  setCartProducts(data??[]);
-
-   }else{
-    setCartProducts(cart);
-
-   }
-   // else set from server
- },[])
+  const { isLoading, error, data } = useQuery("cart-products", ()=>{getCartProducts(currentUser.uid)});
 
   useEffect(() => {
+    //if not logged in set products from local storage
+   
+    if (currentUser ) {
+      if( !isLoading &&data){
+        setCartProducts(data );
+      }
+    } else {
+      setCartProducts(cart);
+    }
+    // else set from server
+  }, [isLoading]);
+
+  useEffect(() => {
+    console.log('running  cart product update .........................................')
     const totalPrice = cartProducts.reduce(
       (acc, curr) => acc + curr.price * curr.quantity,
       0
     );
-    setTotalPrice(totalPrice);
-    if(currentUser){
-      cartProducts.forEach(item=>{
-        updateProductMutation.mutate({ ...item,userId:currentUser.uid })
-      });
+    setTotalPrice(formatCurrency(totalPrice));
+    if (currentUser && !isLoading) {
+      debugger;
+      updateProductMutation.mutate({
+        products:   cartProducts,
+userId: currentUser.uid
+      })
       setCartProducts(cartProducts);
-     
-    }else{
+    } else {
       setCart(cartProducts);
     }
-
-  }, [cartProducts, setCartProducts]);
+  }, [cartProducts, setCartProducts,loading]);
 
   const value = {
     cartProducts,
     setCartProducts,
-    totalPrice
+    totalPrice,
+    loading
     //setRemovableProduct
   };
   //   setLoading(false);
@@ -105,7 +105,7 @@ export function useUpdateCart() {
       const { productName, slug, coverImage, price } = product;
       const productExists = cartProducts.find(x => x.id == slug);
 
-      if ( productExists) {
+      if (productExists) {
         const mappedProducts = cartProducts.map(x => {
           if (x.id === slug) {
             x = { ...x, quantity: qty, cartQuantity: qty };
@@ -117,7 +117,7 @@ export function useUpdateCart() {
         const alteredProduct = {
           productName,
           id: slug,
-          slug,//same as product id
+          slug, //same as product id
           coverImage,
           quantity: qty,
           cartQuantity: qty,
@@ -131,15 +131,13 @@ export function useUpdateCart() {
 }
 
 const useLocalstorageCart = localStorageKey => {
-  const item=localStorage.getItem(localStorageKey) ||"";
- const parsed= item? JSON.parse(item):[]
-  const [cart, setCart] = React.useState(parsed
-  );
- 
+  const item = localStorage.getItem(localStorageKey) || "";
+  const parsed = item ? JSON.parse(item) : [];
+  const [cart, setCart] = React.useState(parsed);
+
   React.useEffect(() => {
-    localStorage.setItem(localStorageKey,JSON.stringify(cart));
-  }, [cart,setCart]);
- 
+    localStorage.setItem(localStorageKey, JSON.stringify(cart));
+  }, [cart, setCart]);
+
   return [cart, setCart];
 };
- 

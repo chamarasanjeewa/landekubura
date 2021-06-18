@@ -16,6 +16,7 @@ import Container from "../../components/other/Container";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
 import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
+import { addUser } from "./../../services/userService";
 import {
   useQuery,
   useMutation,
@@ -26,7 +27,27 @@ import {
 
 const register = () => {
   const { signup } = useAuth();
-  const insertUserMutation = useMutation(user => axiosService.post('/api/users', user))
+  const updateUserMutation = useMutation(
+    user => updateUser(user),
+    {
+      onSuccess: (data, variables, context) => {
+        // Boom baby!
+        console.log("boom baby!");
+        // queryClient.invalidateQueries('cart-products')
+      }
+    }
+  );
+  const addUserMutation = useMutation(
+    user => addUser(user),
+    {
+      onSuccess: (data, variables, context) => {
+        // Boom baby!
+        console.log("boom baby!");
+        // queryClient.invalidateQueries('cart-products')
+      }
+    }
+  );
+
 
   const router = useRouter();
   const [error, setError] = useState("");
@@ -37,12 +58,15 @@ const register = () => {
     try {
       setError("");
       setLoading(true);
-     const user=await signup(values.username, values.password);
-     const res=  insertUserMutation.mutate({userId:user.uid,email:values.username});
-     debugger;
+      const { user } = await signup(values.username, values.password);
+      const res = addUserMutation.mutate({
+        userId: user.uid,
+        email: values.username
+      });
+      if(addUserMutation.isLoading ) return "loading...."
       console.log("Success:", values);
       message.success("Registered successfully");
-      router.push("/auth/login");
+      //router.push("/auth/login");
     } catch (e) {
       message.error(e.message);
       setError("Failed to create an account");

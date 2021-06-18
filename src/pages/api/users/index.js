@@ -1,6 +1,6 @@
 import fireStore from "../../../lib/firebase";
 import { v4 as uuidv4 } from "uuid";
-const collectionName = "user";
+const collectionName = "users";
 export default async (req, res) => {
   console.log("user api..................................");
   switch (req.method) {
@@ -33,7 +33,7 @@ export default async (req, res) => {
       console.log("inside insert user...", user);
       const slug = uuidv4();
       const cityRef = fireStore.collection(collectionName);
-      const result = await cityRef.doc(user.uid).set(user);
+      const result = await cityRef.doc(user.userId).set(user, { merge: true });
       // return res.status(200).json({});
       return res.status(201).json({});
     } catch (error) {

@@ -24,7 +24,6 @@ function cart() {
     message: "Add some message",
     cartId: null
   });
-  //const { isLoading, error, data }=useQuery('cart-products', getCartProducts)
   const { cartProducts, totalPrice } = useCart();
   const showModal = (message, cartId) => {
     setModalState({ ...modalState, visible: true, message: message, cartId });
@@ -32,33 +31,17 @@ function cart() {
 
   const onChangeQuantity = (product, quantity) => {
     setProductQty({ product: product, qty: quantity });
-    // updateProductMutation.mutate({ ...product,
-    //   cartQuantity: quantity});
   };
 
   const onRemoveProductFromCart = product => {
    setRemovableProduct(product);
    message.success("Product removed from cart");
-   //removeProductMutation.mutate({ ...product })
-    //queryClient.invalidateQueries("cart-products");
   };;
 
   const handleOk = item => {
     setRemoveAll(true);
     console.log("remove all products....");
     setModalState({ ...modalState, visible: false });
-    // mutation.mutate({ ...item })
-    // onRemoveProductFromCart({
-    //   cartId: modalState.cartId,
-    //   onSuccess: () => {
-    //     setModalState({ ...modalState, visible: false });
-    //     message.success("Product removed from cart");
-    //   },
-    //   onError: (mes) => {
-    //     setModalState({ ...modalState, visible: false });
-    //     message.error(mes);
-    //   },
-    // });
   };
   const handleCancel = e => {
     setModalState({ ...modalState, visible: false });
@@ -131,7 +114,7 @@ function cart() {
                     </td>
                     <td className="table-name">{item?.name}</td>
                     <td className="table-price">
-                      {formatCurrency(item?.price)}
+                      {(item?.price)}
                     </td>
                     <td>
                       <QuantitySelector
@@ -141,7 +124,7 @@ function cart() {
                       />
                     </td>
                     <td className="table-total">
-                      {formatCurrency(item?.price * item?.cartQuantity)}
+                      {(totalPrice)}
                     </td>
                     <td className="table-remove">
                       <Tooltip title="Remove product">
@@ -165,7 +148,7 @@ function cart() {
                 onFinish={onSubmitCoupon}
                 onFinishFailed={onSubmitCouponFailed}
               >
-                <Form.Item
+                {/* <Form.Item
                   name="promo"
                   rules={[
                     {
@@ -175,12 +158,12 @@ function cart() {
                   ]}
                 >
                   <Input placeholder="Coupon code" />
-                </Form.Item>
-                <Form.Item>
+                </Form.Item> */}
+                {/* <Form.Item>
                   <Button type="primary" htmlType="submit">
                     Apply coupon
                   </Button>
-                </Form.Item>
+                </Form.Item> */}
               </Form>
             </div>
             <Button className="cart-footer__update" type="primary">
@@ -193,10 +176,10 @@ function cart() {
             <h5>Cart total</h5>
             <table>
               <tbody>
-                <tr>
+                {/* <tr>
                   <th>SUBTOTAL</th>
-                  <td>{formatCurrency()}</td>
-                </tr>
+                  <td>{formatCurrency(totalPrice)}</td>
+                </tr> */}
                 {/* <tr>
                       <th>SHIPPING</th>
                       <td>
@@ -206,7 +189,7 @@ function cart() {
                     </tr> */}
                 <tr>
                   <th>Total</th>
-                  <td>{formatCurrency(totalPrice)}</td>
+                  <td>{totalPrice}</td>
                 </tr>
               </tbody>
             </table>

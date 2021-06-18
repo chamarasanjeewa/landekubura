@@ -2,8 +2,8 @@ import axiosService from "./axiosService";
 import { API_URL } from "../common/defines";
 import { renderParam } from "../common/utils";
 
-export const getCartProducts = async params => {
-  const { data } = await axiosService.get("/api/cart/");
+export const getCartProducts = async userId => {
+  const { data } = await axiosService.get("/api/cart/" + userId);
   return data;
 };
 
