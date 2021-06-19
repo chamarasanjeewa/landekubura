@@ -57,7 +57,7 @@ export default async (req, res) => {
         .get()
         .then(res => {
           res.forEach(element => {
-           // element.ref.delete();
+            element.ref.delete();
           });
           product.products.forEach(x=>{
             docRef.doc(x.id).set(x);

@@ -4,12 +4,9 @@ export default handler;
 const collectionName = "users";
 
 async function handler(req, res) {
-  console.log("inside user id...................................");
   switch (req.method) {
     case "GET":
       return getUserById();
-    // case "POST":
-    //   return insertUser(req.body);
     case "PUT":
       return updateUser();
     case "DELETE":
@@ -20,16 +17,12 @@ async function handler(req, res) {
 
   async function getUserById() {
     const userId = req.query.id;
-    console.log("inside get user by id......", userId);
     const cityRef = fireStore.collection(collectionName).doc(userId);
     const doc = await cityRef.get();
     if (!doc.exists) {
       console.log("No such document!");
-    } else {
-      //  console.log("Document data:", doc.data());
-    }
+    } 
     res.statusCode = 200;
-    console.log({ ...doc.data() });
     res.json({ ...doc.data() });
     return res;
   }
@@ -39,7 +32,7 @@ async function handler(req, res) {
       const userId = req.query.id;
       const updateInfo = req.body;
       const cityRef = fireStore.collection(collectionName).doc(userId);
-      const addUser = await cityRef.update(
+      const addedUser = await cityRef.update(
         
         {
             ...updateInfo
@@ -48,7 +41,7 @@ async function handler(req, res) {
         { merge: true }
       
       );
-      return res.status(200).json({});
+      return res.status(200).json(addedUser);
     } catch (error) {
       return res.status(400).json({ message: error });
     }

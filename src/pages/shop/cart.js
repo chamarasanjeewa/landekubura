@@ -9,15 +9,32 @@ import Container from "../../components/other/Container";
 import QuantitySelector from "../../components/other/QuantitySelector";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
+import { useRouter } from "next/router";
+
 import {
   useUpdateCart,
   useRemoveProductFromCart
 } from "../../context/CartContext";
 import{useCart} from  "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
+import { useQuery, useMutation } from "react-query";
+
 
 function cart() {
+  const { currentUser } = useAuth();
+  const router = useRouter();
   const { setProductQty } = useUpdateCart();
   const { setRemovableProduct,setRemoveAll } = useRemoveProductFromCart();
+  const updateProductMutation = useMutation(
+    cartItem => updateCartProducts({ ...cartItem, userId: currentUser.uid }),
+    {
+      onSuccess: (data, variables, context) => {
+        // Boom baby!
+        console.log("boom baby!");
+        // queryClient.invalidateQueries('cart-products')
+      }
+    }
+  );
 
    const [modalState, setModalState] = useState({
     visible: false,
@@ -34,15 +51,16 @@ function cart() {
   };
 
   const onRemoveProductFromCart = product => {
-   setRemovableProduct(product);
-   message.success("Product removed from cart");
-  };;
+    setRemovableProduct(product);
+    message.success("Product removed from cart");
+  };
 
   const handleOk = item => {
     setRemoveAll(true);
     console.log("remove all products....");
     setModalState({ ...modalState, visible: false });
   };
+
   const handleCancel = e => {
     setModalState({ ...modalState, visible: false });
   };
@@ -54,6 +72,21 @@ function cart() {
   const onSubmitCouponFailed = errorInfo => {
     console.log("Failed:", errorInfo);
   };
+
+  const proceedToCheckout = errorInfo => {
+    if (currentUser?.uid) {
+      //sync data
+      updateProductMutation.mutate({
+        products: cartProducts,
+        userId: currentUser.uid
+      });
+      router.push("/shop/checkout");
+    } else {
+      router.replace("/auth/login");
+    }
+    console.log("Failed:", errorInfo);
+  };
+
   // if(isLoading) return "loading...."
   // if(removeProductMutation.isLoading ) return "loading...."
   return (
@@ -113,19 +146,15 @@ function cart() {
                       </div>
                     </td>
                     <td className="table-name">{item?.name}</td>
-                    <td className="table-price">
-                      {(item?.price)}
-                    </td>
+                    <td className="table-price">{item?.price}</td>
                     <td>
                       <QuantitySelector
-                        max={item?.quantity}
+                        // max={item?.quantity}
                         onChange={val => onChangeQuantity(item, val)}
                         defaultValue={+item?.cartQuantity}
                       />
                     </td>
-                    <td className="table-total">
-                      {(totalPrice)}
-                    </td>
+                    <td className="table-total">{totalPrice}</td>
                     <td className="table-remove">
                       <Tooltip title="Remove product">
                         <Button
@@ -166,11 +195,11 @@ function cart() {
                 </Form.Item> */}
               </Form>
             </div>
-            <Button className="cart-footer__update" type="primary">
+            {/* <Button className="cart-footer__update" type="primary">
               <Link href={process.env.PUBLIC_URL + "/shop/shop-3-column"}>
                 <a>Update cart</a>
               </Link>
-            </Button>
+            </Button> */}
           </div>
           <div className="cart-total">
             <h5>Cart total</h5>
@@ -194,7 +223,7 @@ function cart() {
               </tbody>
             </table>
             <div className="cart-total__checkout">
-              <Button type="default" shape="round">
+              <Button type="default" shape="round" onClick={proceedToCheckout}>
                 <Link href={process.env.PUBLIC_URL + "/shop/checkout"}>
                   <a>Proceed to Checkout</a>
                 </Link>

@@ -247,6 +247,7 @@ function Product({ data, className, type, countdownLast = 100000000 }) {
 
               <QuantitySelector
                 max={30}
+                min={0}
                 onChange={val => onChangeQuantity(data, val)}
                 defaultValue={quantitySelectorDefaultVal}
               />

@@ -8,9 +8,9 @@ import {
   Col,
   Select,
   Radio,
-  Breadcrumb,
+  Breadcrumb
 } from "antd";
-import { useRouter } from "next/router"
+import { useRouter } from "next/router";
 import { formatCurrency } from "../../common/utils";
 import { calculateTotalPrice } from "../../common/shopUtils";
 import LayoutOne from "../../components/layout/LayoutOne";
@@ -18,21 +18,25 @@ import Container from "../../components/other/Container";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
 import { useAuth, currentUser } from "../../context/AuthContext";
-import { useCart } from "../../context/CartContext";
+import { useCart, useRemoveProductFromCart } from "../../context/CartContext";
 import { addUser, updateUser } from "./../../services/userService";
+import { addOrder } from "./../../services/orderService";
+
 import { fetchUserData } from "./../../services/userService";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 
+
 function checkout() {
   const { currentUser } = useAuth();
+  const { setRemovableProduct,   setRemoveAllFromGlobalCart } = useRemoveProductFromCart();
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const router = useRouter();
-  const { cartProducts, totalPrice } = useCart();
-  const {
-    isLoading,
-    error: err,
-    data
-  } = useQuery("current-user", () => fetchUserData(currentUser.uid), {});
+  const { cartProducts: data, totalPrice } = useCart();
+  // const {
+  //   isLoading,
+  //   error: err,
+  //   data
+  // } = useQuery("current-user", () => fetchUserData(currentUser.uid), {});
   // const updateUserMutation = useMutation(user => updateUser(user), {
   //   onSuccess: (data, variables, context) => {
   //     // Boom baby!
@@ -40,33 +44,38 @@ function checkout() {
   //     // queryClient.invalidateQueries('cart-products')
   //   }
   // });
-  const addUserMutation = useMutation(user => addUser(user), {
+  const addOrderMutation = useMutation(products => addOrder(products), {
     onSuccess: (data, variables, context) => {
-      // Boom baby!
-      console.log("boom baby!");
-      // queryClient.invalidateQueries('cart-products')
+     setRemoveAllFromGlobalCart(true);
+    //add order
+   
+    //send email
+    router.push("/shop/order-complete");
     }
   });
 
-  const onFinish = values => {
-    //insert user if not exists
-    const user = {
 
-
-                userId: currentUser.uid,
-      
-      
-      email:   currentUser.email,
-     
-     
-      ...values
-   
-   
-    };
-    addUserMutation.mutate(user);
+  const addUserMutation = useMutation(user => addUser(user), {
+    onSuccess: (data, variables, context) => { 
     //add order
     //send email
-    router.push("/shop/order-complete");
+   // router.push("/shop/order-complete");
+    }
+  });
+
+
+  const onFinish = values => {
+    debugger;
+    //insert user if not exists
+    // const user = {
+    //   userId: currentUser.uid,
+    //   email: currentUser.email,
+    //   ...values
+    // };
+    // addUserMutation.mutate(user);
+    const order={userId:currentUser.uid,products:data,status:'created'}
+    addOrderMutation.mutate(order);
+    
   };
   const onFinishFailed = errorInfo => {
     console.log("Failed:", errorInfo);
@@ -74,9 +83,9 @@ function checkout() {
   const onChoosePaymentMethod = e => {
     setPaymentMethod(e.target.value);
   };
-   if (isLoading) return "loading.....";
-   console.log(data?.data);
-   const user = data?.data;
+  //if (isLoading) return "loading.....";
+  console.log(data?.data);
+  const user = data?.data;
   return (
     <LayoutOne title="Checkout">
       <Container>
@@ -216,7 +225,7 @@ function checkout() {
                     </Col>
                     <Col span={24}>
                       <Form.Item
-                        initialValue={user?.email                               ??                               currentUser?.email}
+                        initialValue={user?.email ?? currentUser?.email}
                         label="Email address"
                         name="email"
                         rules={[
@@ -237,129 +246,9 @@ function checkout() {
                     </Col> */}
                     <Col span={24}>
                       <Form.Item
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                                                      label="Order notes (optional)"
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                                                      name="note"
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                                                      initialValue={data?.notes}
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
+                        label="Order notes (optional)"
+                        name="note"
+                        initialValue={data?.notes}
                       >
                         <Input.TextArea />
                       </Form.Item>
@@ -373,7 +262,7 @@ function checkout() {
                 <h3 className="checkout-title">Your order</h3>
                 <table className="checkout-total__table">
                   <tbody>
-                    {cartProducts?.map((item, index) => (
+                    {data?.map((item, index) => (
                       <tr key={index}>
                         <td>
                           {item.productName} x {item.cartQuantity}

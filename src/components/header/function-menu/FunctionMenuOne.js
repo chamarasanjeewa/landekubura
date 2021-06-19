@@ -19,7 +19,7 @@ function FunctionMenuOne({ activeHeaderCollapse }) {
               md={{ span: 16, order: 2 }}
               lg={18}
             >
-              <SearchForm />
+              {/* <SearchForm /> */}
             </Col>
           </Row>
         </div>

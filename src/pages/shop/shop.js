@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Col, Row, Pagination, Breadcrumb } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import LayoutFive from "../../components/layout/LayoutFive";
 import Container from "../../components/other/Container";
@@ -8,6 +9,7 @@ import ProductGrid from "../../components/sections/product-thumb/ProductGrid";
 import ShopHeader from "../../components/shop/ShopHeader";
 import { useQuery } from "react-query";
 import { getProducts } from "../../services/shopService";
+import {CenteredSpinner} from "../../components/other/centeredSpinner"
 
 function shopGrid3Column() {
   const router = useRouter();
@@ -16,7 +18,7 @@ function shopGrid3Column() {
   //const shopFilterState = useSelector(state => state.shopFilterReducer);
   //const { sort, show, view, category, color, size, tag } = shopFilterState;
   const { isLoading, error, data } = useQuery("products", getProducts);
-  if (isLoading) return 'loading....'
+  if (isLoading) return <CenteredSpinner/>
 //sync product with cart
 
   // const onPaginationChange = current => {

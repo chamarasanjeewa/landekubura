@@ -3,19 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 export default async (req, res) => {
   switch (req.method) {
     case "GET":
-      return getCart();
+      return getAllOrders();
     case "POST":
       return createOrder(req.body);
-    case "PUT":
-      return updateProductCart(req.body);
-    // case "DELETE":
-    //   return deleteProductCart(req.query);
     default:
       return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
   async function createOrder(cart) {
-    console.log("inside create order.......", cart);
     const order = {
       userId: cart.userId,
       products: cart.products,
@@ -30,4 +25,18 @@ export default async (req, res) => {
       console.log("error inserting products", error);
     }
   }
+
+  async function getAllOrders() {
+    const userId = req.query.id;
+    const allOrders = await fireStore
+      .collection("orders")
+      .get();
+    const mappedOrders = await allOrders.docs.map(x => {
+      return { orderId: x.id, ...x.data() };
+    });
+    res.statusCode = 200;
+    res.json(mappedOrders);
+    return res;
+  }
+
 };

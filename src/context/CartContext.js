@@ -7,68 +7,35 @@ import { useQuery, useMutation } from "react-query";
 const CartContext = React.createContext();
 
 export function CartProvider({ children }) {
-  const [cartProducts, setCartProducts] = useState([]);
+  const [globalCart, setGlobalCart] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [totalPrice, setTotalPrice] = useState(0);
-  const [cart, setCart] = useLocalstorageCart("shopping-cart");
+  const { cart, setCart } = useLocalstorageCart("shopping-cart");
   const { currentUser } = useAuth();
 
-  // const updateProductMutation = useMutation(
-  //   cartItem => updateCartProducts({   ...cartItem,   userId:   currentUser.uid   }),
-  //   {
-  //     onSuccess: (data, variables, context) => {
-  //       // Boom baby!
-  //       console.log("boom baby!");
-  //       // queryClient.invalidateQueries('cart-products')
-  //     }
-  //   }
-  // );
-
-  //const { isLoading, error, data } = useQuery("cart-products", ()=>{getCartProducts(currentUser.uid)});
-
-  // useEffect(() => {
-  //   //if not logged in set products from local storage
-   
-  //   if (currentUser ) {
-  //     if( !isLoading &&data){
-  //       setCartProducts(data );
-  //     }
-  //   } else {
-  //     setCartProducts(cart);
-  //   }
-  //   // else set from server
-  // }, [isLoading]);
-
-  useEffect(() => {setCartProducts(cart)},[])
+  useEffect(() => {
+    setGlobalCart(cart);
+  }, []);
 
   useEffect(() => {
-    console.log('running  cart product update .........................................')
-    const totalPrice = cartProducts.reduce(
+    console.log(
+      "running  cart product update ........................................."
+    );
+    const totalPrice = globalCart.reduce(
       (acc, curr) => acc + curr.price * curr.quantity,
       0
     );
     setTotalPrice(formatCurrency(totalPrice));
-//     if (currentUser && !isLoading) {
-//       debugger;
-//       updateProductMutation.mutate({
-//         products:   cartProducts,
-// userId: currentUser.uid
-//       })
-//       setCartProducts(cartProducts);
-//     } else {
-      setCart(cartProducts);
-   // }
-  }, [cartProducts, setCartProducts,loading]);
+    setCart(globalCart);
+  }, [globalCart, setGlobalCart, loading]);
 
   const value = {
-    cartProducts,
-    setCartProducts,
+    cartProducts: globalCart,
+    setCartProducts: setGlobalCart,
     totalPrice,
     loading
-    //setRemovableProduct
   };
-  //   setLoading(false);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
@@ -80,7 +47,7 @@ export function useCart() {
 export function useRemoveProductFromCart() {
   const { setCartProducts, cartProducts } = useCart();
   const [product, setRemovableProduct] = useState(null);
-  const [removeAll, setRemoveAll] = useState(false);
+  const [removeAllFromGlobalCart, setRemoveAllFromGlobalCart] = useState(false);
 
   useEffect(() => {
     if (product) {
@@ -90,12 +57,13 @@ export function useRemoveProductFromCart() {
   }, [product, setRemovableProduct]);
 
   useEffect(() => {
-    if (removeAll) {
+    if (removeAllFromGlobalCart) {
+      debugger;
       setCartProducts([]);
     }
-  }, [removeAll, setRemoveAll]);
+  }, [removeAllFromGlobalCart, setRemoveAllFromGlobalCart]);
 
-  return { setRemovableProduct, setRemoveAll };
+  return { setRemovableProduct, setRemoveAllFromGlobalCart };
 }
 
 export function useUpdateCart() {
@@ -135,11 +103,15 @@ export function useUpdateCart() {
 const useLocalstorageCart = localStorageKey => {
   const item = localStorage.getItem(localStorageKey) || "";
   const parsed = item ? JSON.parse(item) : [];
-  const [cart, setCart] = React.useState(parsed);
+  const [localStorageCart, setLocalStorageCart] = React.useState(parsed);
 
   React.useEffect(() => {
-    localStorage.setItem(localStorageKey, JSON.stringify(cart));
-  }, [cart, setCart]);
+    localStorage.setItem(localStorageKey, JSON.stringify(localStorageCart));
+  }, [localStorageCart, setLocalStorageCart]);
 
-  return [cart, setCart];
+  const removeCart = () => {
+    localStorage.removeItem(localStorageKey);
+  };
+
+  return { cart: localStorageCart, setCart: setLocalStorageCart, removeCart };
 };
