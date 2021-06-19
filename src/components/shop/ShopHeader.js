@@ -38,7 +38,7 @@ const ShopHeader = ({ title, getViewPerPage, getCurrentSort, hideView }) => {
   return (
     <div className="shop-header">
       <h5>{title}</h5>
-      <div className="shop-header-selectors">
+      {/* <div className="shop-header-selectors">
         <Select
           defaultValue=""
           style={{ width: 175 }}
@@ -59,23 +59,23 @@ const ShopHeader = ({ title, getViewPerPage, getCurrentSort, hideView }) => {
           <Option value="15">Show 15</Option>
           <Option value="20">Show 20</Option>
         </Select>
-      </div>
+      </div> */}
       {!hideView && (
         <div className="shop-header-view">
-          <a
+          {/* <a
             onClick={(e) => onViewChage(e, "grid")}
             className={classNames({ active: view === "grid" })}
             href="#"
           >
             <i className="fas fa-th-large" />
-          </a>
-          <a
+          </a> */}
+          {/* <a
             onClick={(e) => onViewChage(e, "list")}
             className={classNames({ active: view === "list" })}
             href="#"
           >
             <i className="fas fa-th-list" />
-          </a>
+          </a> */}
         </div>
       )}
     </div>

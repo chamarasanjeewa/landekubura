@@ -8,7 +8,7 @@ export default function HeaderOne({ activeHeaderCollapse }) {
     <>
       <TopNavOne />
       <MenuOne />
-      <FunctionMenuOne activeHeaderCollapse={activeHeaderCollapse} />
+      {/* <FunctionMenuOne activeHeaderCollapse={activeHeaderCollapse} /> */}
     </>
   );
 }

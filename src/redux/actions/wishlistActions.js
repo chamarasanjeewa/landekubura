@@ -1,6 +1,6 @@
 import { WISHLIST } from "../actionTypes";
 
-import * as wishlistApis from "../../apis/wishlist";
+import * as wishlistApis from "../../services/wishlistService";
 
 //Get cart data
 const fetchWishList = () => ({

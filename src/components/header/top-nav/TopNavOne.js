@@ -8,8 +8,8 @@ import { useRouter } from "next/router";
 
 const flagData = [
   { name: "english", image: "/assets/images/header/flag-usa.png" },
-  { name: "japanese", image: "/assets/images/header/flag-jp.png" },
-  { name: "vietnamese", image: "/assets/images/header/flag-vn.png" },
+  // { name: "japanese", image: "/assets/images/header/flag-jp.png" },
+  // { name: "vietnamese", image: "/assets/images/header/flag-vn.png" },
 ];
 
 export default function TopNavOne({ containerFluid }) {
@@ -37,7 +37,7 @@ export default function TopNavOne({ containerFluid }) {
               <SocialIcons />
             </div>
             <div className="top-nav-one-right__item">
-              <Select defaultValue="english" width={125} bordered={false}>
+              {/* <Select defaultValue="english" width={125} bordered={false}>
                 {flagData.map((item, index) => (
                   <Option key={index} value={item.name}>
                     <img
@@ -54,7 +54,7 @@ export default function TopNavOne({ containerFluid }) {
                     {item.name}
                   </Option>
                 ))}
-              </Select>
+              </Select> */}
             </div>
             <div className="top-nav-one-right__item">
               {currentUser  ? <div>

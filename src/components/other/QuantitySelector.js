@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "antd";
 import classNames from "classnames";
-
 import useDebounce from "../../common/useDebound";
 
 function QuantitySelector({
@@ -16,6 +15,7 @@ function QuantitySelector({
   const firstUpdate = useRef(true);
   const [value, setValue] = useState(defaultValue);
   const deboundValue = useDebounce(value, 300);
+
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
@@ -23,9 +23,11 @@ function QuantitySelector({
     }
     onChange && onChange(value);
   }, [deboundValue]);
+
   useEffect(() => {
     setValue(defaultValue);
   }, [defaultValue]);
+
   const decreaseValue = useCallback(() => {
     if (min && value <= min) {
       return;
@@ -37,6 +39,7 @@ function QuantitySelector({
       setValue(value - 1);
     }
   }, [value]);
+
   const increaseValue = useCallback(() => {
     if (value >= max) {
       return;
@@ -44,6 +47,7 @@ function QuantitySelector({
     onIncrease && onIncrease();
     setValue(value + 1);
   }, [value]);
+  
   return (
     <div className={`quantity-selector ${classNames(className)}`}>
       <div className="quantity-selector-number">{value}</div>

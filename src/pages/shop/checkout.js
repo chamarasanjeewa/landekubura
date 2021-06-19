@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   Form,
   Input,
@@ -9,62 +8,84 @@ import {
   Col,
   Select,
   Radio,
-  Breadcrumb,
+  Breadcrumb
 } from "antd";
 import { useRouter } from "next/router";
-
 import { formatCurrency } from "../../common/utils";
 import { calculateTotalPrice } from "../../common/shopUtils";
 import LayoutOne from "../../components/layout/LayoutOne";
 import Container from "../../components/other/Container";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, currentUser } from "../../context/AuthContext";
+import { useCart, useRemoveProductFromCart } from "../../context/CartContext";
+import { addUser, updateUser } from "./../../services/userService";
+import { addOrder } from "./../../services/orderService";
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider
-} from "react-query";
-import axiosService from "./../../common/axiosService";
+import { fetchUserData } from "./../../services/userService";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 
-
-const getProducts = async params => {
-  const { data } = await axiosService.get("/api/cart/");
-  return data;
-};
-
-const getUser = async params => {
-  const { data } = await axiosService.get("/api/users/"+params);
-  return data;
-};
 
 function checkout() {
-  const { currentUser, logout } = useAuth();
+  const { currentUser } = useAuth();
+  const { setRemovableProduct,   setRemoveAllFromGlobalCart } = useRemoveProductFromCart();
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const router = useRouter();
-  const queryClient=useQueryClient();
-const data = queryClient.getQueryData("cart-products");
-
-//const { isLoading, error, data }=useQuery('cart-products', getProducts)
-const { isLoading, error, data:userData }=useQuery('get-user',()=>{getUser(currentUser.uid)} )
-console.log(userData);
-  //const cartState = useSelector((state) => state.cartReducer);
-  const onFinish = (values) => {
-    //insert user if not exists
+  const { cartProducts: data, totalPrice } = useCart();
+  // const {
+  //   isLoading,
+  //   error: err,
+  //   data
+  // } = useQuery("current-user", () => fetchUserData(currentUser.uid), {});
+  // const updateUserMutation = useMutation(user => updateUser(user), {
+  //   onSuccess: (data, variables, context) => {
+  //     // Boom baby!
+  //     console.log("boom baby!");
+  //     // queryClient.invalidateQueries('cart-products')
+  //   }
+  // });
+  const addOrderMutation = useMutation(products => addOrder(products), {
+    onSuccess: (data, variables, context) => {
+     setRemoveAllFromGlobalCart(true);
     //add order
+   
     //send email
     router.push("/shop/order-complete");
+    }
+  });
+
+
+  const addUserMutation = useMutation(user => addUser(user), {
+    onSuccess: (data, variables, context) => { 
+    //add order
+    //send email
+   // router.push("/shop/order-complete");
+    }
+  });
+
+
+  const onFinish = values => {
+    debugger;
+    //insert user if not exists
+    // const user = {
+    //   userId: currentUser.uid,
+    //   email: currentUser.email,
+    //   ...values
+    // };
+    // addUserMutation.mutate(user);
+    const order={userId:currentUser.uid,products:data,status:'created'}
+    addOrderMutation.mutate(order);
+    
   };
-  const onFinishFailed = (errorInfo) => {
+  const onFinishFailed = errorInfo => {
     console.log("Failed:", errorInfo);
   };
-  const onChoosePaymentMethod = (e) => {
+  const onChoosePaymentMethod = e => {
     setPaymentMethod(e.target.value);
   };
-  // if(isLoading) return "loading....."
+  //if (isLoading) return "loading.....";
+  console.log(data?.data);
+  const user = data?.data;
   return (
     <LayoutOne title="Checkout">
       <Container>
@@ -81,48 +102,50 @@ console.log(userData);
           emptyDescription="No product in cart"
           data={cartState}
           renderData={(data) => ( */}
-            <div className="checkout">
-              <Row gutter={50}>
-                <Col xs={24} md={16}>
-                  <div className="checkout-form">
-                    <h3 className="checkout-title">Billing details</h3>
-                    <Form
-                      name="checkout"
-                      layout="vertical"
-                      onFinish={onFinish}
-                      onFinishFailed={onFinishFailed}
-                      id="checkout-form"
-                    >
-                      <Row gutter={15}>
-                        <Col xs={24} sm={12}>
-                          <Form.Item
-                            label="First name"
-                            name="firstname"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input your first name!",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col xs={24} sm={12}>
-                          <Form.Item
-                            label="Last name"
-                            name="lastname"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input your last name!",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        {/* <Col span={24}>
+        <div className="checkout">
+          <Row gutter={50}>
+            <Col xs={24} md={16}>
+              <div className="checkout-form">
+                <h3 className="checkout-title">Billing details</h3>
+                <Form
+                  name="checkout"
+                  layout="vertical"
+                  onFinish={onFinish}
+                  onFinishFailed={onFinishFailed}
+                  id="checkout-form"
+                >
+                  <Row gutter={15}>
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        label="First name"
+                        name="firstname"
+                        initialValue={user?.firstname}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your first name!"
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        label="Last name"
+                        name="lastname"
+                        initialValue={user?.lastname}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your last name!"
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    {/* <Col span={24}>
                           <Form.Item
                             label="Company name (optional)"
                             name="company"
@@ -130,7 +153,7 @@ console.log(userData);
                             <Input />
                           </Form.Item>
                         </Col> */}
-                        {/* <Col span={24}>
+                    {/* <Col span={24}>
                           <Form.Item
                             label="Country"
                             name="country"
@@ -150,152 +173,157 @@ console.log(userData);
                             </Select>
                           </Form.Item>
                         </Col> */}
-                        <Col span={24}>
-                          <Form.Item
-                            label="Street address"
-                            name="street"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input your street addres!",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            label="Postcode / ZIP (optional)"
-                            name="zip"
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            label="Town / City"
-                            name="city"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input your Town/City!",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            label="Phone"
-                            name="phone"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input your phone!",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item initialValue={userData?.email}
-                            label="Email address"
-                            name="email"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input your email address!",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item name="other-address">
-                            <h3 className="checkout-title">Shipping Address</h3>
-                            <Checkbox>Ship to a different address?</Checkbox>
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item label="Order notes (optional)" name="note">
-                            <Input.TextArea />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </div>
-                </Col>
-                <Col xs={24} md={8}>
-                  <div className="checkout-total">
-                    <h3 className="checkout-title">Your order</h3>
-                    <table className="checkout-total__table">
-                      <tbody>
-                        {data?.map((item, index) => (
-                          <tr key={index}>
-                            <td>
-                              {item.productName} x {item.cartQuantity}
-                            </td>
-                            <td className="-bold ">
-                              {formatCurrency(item.price * item.cartQuantity)}
-                            </td>
-                          </tr>
-                        ))}
-                        <tr>
-                          <th>SUBTOTAL</th>
-                          <td className="-bold -color">
-                            {formatCurrency(calculateTotalPrice(data))}
-                          </td>
-                        </tr>
-                        {/* <tr>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Street address"
+                        initialValue={user?.street}
+                        name="street"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your street addres!"
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Form.Item label="Postcode / ZIP (optional)" name="zip">
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Town / City"
+                        name="city"
+                        initialValue={user?.city}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Town/City!"
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Form.Item
+                        label="Phone"
+                        name="phone"
+                        initialValue={user?.phone}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your phone!"
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Form.Item
+                        initialValue={user?.email ?? currentUser?.email}
+                        label="Email address"
+                        name="email"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your email address!"
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    {/* <Col span={24}>
+                      <Form.Item name="other-address">
+                        <h3 className="checkout-title">Shipping Address</h3>
+                        <Checkbox>Ship to a different address?</Checkbox>
+                      </Form.Item>
+                    </Col> */}
+                    <Col span={24}>
+                      <Form.Item
+                        label="Order notes (optional)"
+                        name="note"
+                        initialValue={data?.notes}
+                      >
+                        <Input.TextArea />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form>
+              </div>
+            </Col>
+            <Col xs={24} md={8}>
+              <div className="checkout-total">
+                <h3 className="checkout-title">Your order</h3>
+                <table className="checkout-total__table">
+                  <tbody>
+                    {data?.map((item, index) => (
+                      <tr key={index}>
+                        <td>
+                          {item.productName} x {item.cartQuantity}
+                        </td>
+                        <td className="-bold ">
+                          {formatCurrency(item.price * item.cartQuantity)}
+                        </td>
+                      </tr>
+                    ))}
+                    {/* <tr>
+                      <th>SUBTOTAL</th>
+                      <td className="-bold -color">
+                        {totalPrice}
+                      </td>
+                    </tr> */}
+                    {/* <tr>
                           <th>SHIPPING</th>
                           <td>
                             <p>Free shipping</p>
                             <p>Calculate shipping</p>
                           </td>
                         </tr> */}
-                        <tr>
-                          <th>Total</th>
-                          <td
-                            style={{ fontSize: 20 / 16 + "em" }}
-                            className="-bold -color"
-                          >
-                            {formatCurrency(calculateTotalPrice(data))}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div className="checkout-total__footer">
-                      <Radio.Group
-                        onChange={onChoosePaymentMethod}
-                        value={paymentMethod}
+                    <tr>
+                      <th>Total</th>
+                      <td
+                        style={{ fontSize: 20 / 16 + "em" }}
+                        className="-bold -color"
                       >
-                        <Radio style={{ display: "block" }} value="cod">
-                          Cash on delivery
-                        </Radio>
-                        {/* <Radio style={{ display: "block" }} value="paypal">
+                        {totalPrice}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div className="checkout-total__footer">
+                  <Radio.Group
+                    onChange={onChoosePaymentMethod}
+                    value={paymentMethod}
+                  >
+                    <Radio style={{ display: "block" }} value="cod">
+                      Cash on delivery
+                    </Radio>
+                    {/* <Radio style={{ display: "block" }} value="paypal">
                           Paypal
                         </Radio> */}
-                      </Radio.Group>
-                    </div>
-                    <Button
-                      className="checkout-sumbit"
-                      type="default"
-                      shape="round"
-                      form="checkout-form"
-                      key="submit"
-                      htmlType="submit"
-                    >
-                      <a>Place order</a>
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          {/* )}
+                  </Radio.Group>
+                </div>
+                <Button
+                  className="checkout-sumbit"
+                  type="default"
+                  shape="round"
+                  form="checkout-form"
+                  key="submit"
+                  htmlType="submit"
+                >
+                  <a>Place order</a>
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </div>
+        {/* )}
         /> */}
         <PartnerOne />
       </Container>

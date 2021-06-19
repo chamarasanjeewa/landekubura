@@ -17,7 +17,7 @@ import {
   QueryClient,
   QueryClientProvider
 } from "react-query";
-import axiosService from "./../../common/axiosService";
+import axiosService from "./../../services/axiosService";
 
 const getProducts = async params => {
   const [id] = params.queryKey;

@@ -3,7 +3,6 @@ import fireStore from "../../../lib/firebase";
 export default handler;
 
 async function handler(req, res) {
-  console.log("inside product id...................................");
   switch (req.method) {
     case "GET":
       return getProductById();
@@ -18,14 +17,12 @@ async function handler(req, res) {
   }
 
   async function getProductById() {
-    console.log("inside get prouct by id......");
     const productId = req.query.id;
     const cityRef = fireStore.collection("products").doc(productId);
     const doc = await cityRef.get();
     if (!doc.exists) {
       console.log("No such document!");
     } else {
-      //  console.log("Document data:", doc.data());
     }
     res.statusCode = 200;
     console.log({ ...doc.data() });
@@ -38,9 +35,6 @@ async function handler(req, res) {
       const productId = req.query.id;
       const updateInfo = req.body;
       const cityRef = fireStore.collection("products").doc(productId);
-      const onRemoveProductFromWishlist = await cityRef.update({
-        ...updateInfo
-      });
       return res.status(200).json({});
     } catch (error) {
       return res.status(400).json({ message: error });

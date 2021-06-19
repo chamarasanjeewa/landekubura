@@ -9,7 +9,7 @@ import PartnerOne from "../../components/sections/partners/PartnerOne";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import axiosService from "./../../common/axiosService";
+import axiosService from "./../../services/axiosService";
 import {
   useQuery,
   useMutation,

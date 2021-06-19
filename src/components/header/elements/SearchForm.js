@@ -70,7 +70,7 @@ function SearchForm({ enterButton = "Search", hideSelect }) {
           </div>
         )}
 
-        <div className="search-form-input">
+        {/* <div className="search-form-input">
           <AutoComplete
             backfill
             value={currentSearch}
@@ -91,7 +91,7 @@ function SearchForm({ enterButton = "Search", hideSelect }) {
               onSearch={onSearch}
             />
           </AutoComplete>
-        </div>
+        </div> */}
       </div>
     </div>
   );

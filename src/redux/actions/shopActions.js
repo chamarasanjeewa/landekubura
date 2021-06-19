@@ -1,5 +1,5 @@
 import { SHOP } from "../actionTypes";
-import * as shopApis from "../../apis/shop";
+import * as shopApis from "../../services/shopService";
 
 //Get all products
 export const fetchProducts = () => ({
