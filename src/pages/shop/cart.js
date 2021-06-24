@@ -10,6 +10,7 @@ import QuantitySelector from "../../components/other/QuantitySelector";
 import ShopOrderStep from "../../components/shop/ShopOrderStep";
 import PartnerOne from "../../components/sections/partners/PartnerOne";
 import { useRouter } from "next/router";
+import { updateCartProducts } from "../../services/cartService";
 
 import {
   useUpdateCart,
@@ -154,7 +155,9 @@ function cart() {
                         defaultValue={+item?.cartQuantity}
                       />
                     </td>
-                    <td className="table-total">{totalPrice}</td>
+                    <td className="table-total">
+                      {item?.price * item?.cartQuantity}
+                    </td>
                     <td className="table-remove">
                       <Tooltip title="Remove product">
                         <Button

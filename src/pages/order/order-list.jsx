@@ -42,7 +42,7 @@ const listOrders = () => {
 
     return (
       <Table
-        rowKey={record => record.orderId}
+        rowKey={record => record.id}
         columns={productColumns}
         dataSource={data}
         pagination={false}
@@ -65,17 +65,17 @@ const listOrders = () => {
       title: "user",
       dataIndex: "userId",
       key: "userId"
-    },
-
-    {
-    title: "Action",
-    key: "action",
-    render: (text, record) => (
-    <Space size="middle">
-      <a href={"/order/edit-order/?pid=" + record.slug}>Edit</a>
-    </Space>
-    )
     }
+
+    // {
+    // title: "Action",
+    // key: "action",
+    // render: (text, record) => (
+    // <Space size="middle">
+    //   <a href={"/order/edit-order/?pid=" + record.slug}>Edit</a>
+    // </Space>
+    // )
+    // }
   ];
 
   return (
@@ -83,7 +83,7 @@ const listOrders = () => {
       {/* <Button type={link}>
         <a href={"/admin/edit-order/"}>Create Product</a>
       </Button> */}
-      <Table
+      <Table  rowKey={new uuid()}
         dataSource={dataSource}
         columns={columns}
         expandable={{

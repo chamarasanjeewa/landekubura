@@ -18,8 +18,8 @@ export default async (req, res) => {
     };
     try {
       const uniqueId = uuidv4();
-      const docRef = fireStore.collection("order").doc(uniqueId);
-      docRef.set(order);
+      const docRef = fireStore.collection("orders").doc(uniqueId);
+      await docRef.set(order);
       return res.status(201).json({ reference: uniqueId });
     } catch (error) {
       console.log("error inserting products", error);
