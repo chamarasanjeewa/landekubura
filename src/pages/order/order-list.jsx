@@ -83,7 +83,7 @@ const listOrders = () => {
       {/* <Button type={link}>
         <a href={"/admin/edit-order/"}>Create Product</a>
       </Button> */}
-      <Table  rowKey={new uuid()}
+      <Table  rowKey={1234}
         dataSource={dataSource}
         columns={columns}
         expandable={{
