@@ -66,7 +66,7 @@ const register = () => {
       if(addUserMutation.isLoading ) return "loading...."
       console.log("Success:", values);
       message.success("Registered successfully");
-      //router.push("/auth/login");
+      router.push("/auth/login");
     } catch (e) {
       message.error(e.message);
       setError("Failed to create an account");
