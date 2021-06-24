@@ -1,8 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
-import { getCartProducts, updateCartProducts } from "./../services/cartService";
 import { formatCurrency } from "./../common/utils";
-import { useQuery, useMutation } from "react-query";
 
 const CartContext = React.createContext();
 
@@ -12,16 +10,13 @@ export function CartProvider({ children }) {
 
   const [totalPrice, setTotalPrice] = useState(0);
   const { cart, setCart } = useLocalstorageCart("shopping-cart");
-  const { currentUser } = useAuth();
 
   useEffect(() => {
     setGlobalCart(cart);
   }, []);
 
   useEffect(() => {
-    console.log(
-      "running  cart product update ........................................."
-    );
+ 
     const totalPrice = globalCart.reduce(
       (acc, curr) => acc + curr.price * curr.quantity,
       0

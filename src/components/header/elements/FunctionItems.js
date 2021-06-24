@@ -2,25 +2,17 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import {
   useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider
+  useQueryClient
 } from "react-query";
 import { formatCurrency } from "../../../common/utils";
-import { calculateTotalPrice } from "../../../common/shopUtils";
 import {
   getCartProducts,
-  deleteCartProducts,
-  updateCartProducts,
-  onRemoveProductFromCart
 } from "../../../services/cartService";
 import { cartAuth, useCart } from "../../../context/CartContext";
 
 
 function FunctionItems({ hideTotal, hideWishlist = true }) {
   console.log("rerender function items....");
-  const queryClient = useQueryClient();
   const { totalPrice } = useCart();
 
   const { isLoading, error, data } = useQuery("cart-products", getCartProducts);

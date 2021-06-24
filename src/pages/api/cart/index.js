@@ -14,25 +14,20 @@ export default async (req, res) => {
       return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  // async function getCart() {
-  //   console.log("inside api to get cart.....");
-  //   const allProducts = await fireStore.collection("cart") .doc(product.userId)
-  //   .collection("products").get();
-  //   const mappedProducts = await allProducts.docs.map(x => {
-  //     return { slug: x.id, ...x.data() };
-  //   });
-  //   res.statusCode = 200;
-  //   console.log(mappedProducts);
-  //   res.json(mappedProducts);
-  //   return res;
-  // }
-
-  async function insertProductToCart(product) {
+  async function insertProductToCart(cartItem) {
     try {
-      console.log("inside insert product...", product);
-      const slug = uuidv4();
-      const cityRef = fireStore.collection("cart");
-      const result = await cityRef.doc(product.userId).set(product);
+      const dbCartItem = {
+        userId: cartItem.userId,
+        products: cartItem.products
+      };
+      console.log("inside insert product...", dbCartItem);
+      // const slug = uuidv4();
+      // const cityRef = fireStore.collection("cart");
+      // const result = await cityRef.doc(product.userId).set(product);
+
+      const uniqueId = uuidv4();
+      const docRef = fireStore.collection("cart").doc(uniqueId);
+      await docRef.set(dbCartItem);
       // return res.status(200).json({});
       return res.status(201).json({});
     } catch (error) {
