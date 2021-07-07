@@ -1,6 +1,7 @@
 import { Breadcrumb, Form, Input, Button, Upload, Row, Col } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Select } from "antd";
 import React from "react";
 import { FileTextFilled, InboxOutlined } from "@ant-design/icons";
 import LayoutOne from "../../components/layout/LayoutOne";
@@ -21,6 +22,8 @@ import {
 const schema = yup.object().shape({
   productName: yup.string().required("required")
 });
+
+const units = ["kilos", "units"];
 
 const getProducts = async params => {
   const [id] = params.queryKey;
@@ -85,6 +88,7 @@ const editProduct = () => {
   if (error) return "An error has occurred: " + error.message;
 
   console.log(JSON.stringify(data));
+
 
   return (
     <Container>
@@ -155,8 +159,24 @@ const editProduct = () => {
                   <Controller
                     name="rate"
                     control={control}
-                    defaultValue={data?.rate}
+                    defaultValue={data?.unit}
                     render={({ field }) => <Input {...field} />}
+                  />
+                </Form.Item>
+                <Form.Item label="unit" name="unit">
+                  <Controller
+                    name="unit"
+                    control={control}
+                    defaultValue={data?.unit}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                      >
+                        {units.map(x => (
+                          <Select.Option value={x}>{x}</Select.Option>
+                        ))}
+                      </Select>
+                    )}
                   />
                 </Form.Item>
                 <Form.Item label="description" name="description">
@@ -190,3 +210,5 @@ const editProduct = () => {
 };
 
 export default editProduct;
+
+
